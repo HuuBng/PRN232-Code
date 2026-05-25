@@ -23,7 +23,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: "12345"
     volumes:
-      - prn232_lms_postgres_data:/var/lib/postgresql/data
+      - prn232_lab01_lms_postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d PRN232_LMS_Lab01"]
       interval: 10s
@@ -31,4 +31,4 @@ services:
       retries: 5
 
 volumes:
-  prn232_lms_postgres_data:
+  prn232_lab01_lms_postgres_data:
