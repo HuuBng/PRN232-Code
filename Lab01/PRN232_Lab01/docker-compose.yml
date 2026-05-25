@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: prn232-lms-api
+    container_name: prn232-lab01-lms-api
     restart: unless-stopped
     environment:
       ASPNETCORE_ENVIRONMENT: Development
@@ -14,10 +14,9 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-
   postgres:
     image: postgres:17-alpine
-    container_name: prn232-lms-postgres
+    container_name: prn232-lab01-lms-postgres
     restart: unless-stopped
     environment:
       POSTGRES_DB: PRN232_LMS_Lab01
@@ -25,7 +24,6 @@ services:
       POSTGRES_PASSWORD: "12345"
     volumes:
       - prn232_lms_postgres_data:/var/lib/postgresql/data
-      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d PRN232_LMS_Lab01"]
       interval: 10s

@@ -7,14 +7,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.4"/>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.16"/>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.4">
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+          <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.4" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.16" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\PRN232.LMS.Services\PRN232.LMS.Services.csproj"/>
+        <ProjectReference Include="..\PRN232.LMS.Services\PRN232.LMS.Services.csproj" />
     </ItemGroup>
 
 </Project>
