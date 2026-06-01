@@ -78,6 +78,8 @@ public class CourseService(IUnitOfWork unitOfWork) : ICourseService
     /// </summary>
     public async Task<CourseResponse> CreateCourseAsync(CourseRequest request)
     {
+        await ValidateReferencesAsync(request);
+
         var course = new Course
         {
             CourseName = request.CourseName.Trim(),
@@ -97,6 +99,8 @@ public class CourseService(IUnitOfWork unitOfWork) : ICourseService
     {
         var course = await unitOfWork.Courses.GetByIdAsync(id);
         if (course == null) return null;
+
+        await ValidateReferencesAsync(request);
 
         course.CourseName = request.CourseName.Trim();
         course.SemesterId = request.SemesterId;
@@ -172,5 +176,18 @@ public class CourseService(IUnitOfWork unitOfWork) : ICourseService
                     Credit = course.Subject.Credit
                 }
         };
+    }
+
+    private async Task ValidateReferencesAsync(CourseRequest request)
+    {
+        if (!await unitOfWork.Semesters.ExistsAsync(request.SemesterId))
+        {
+            throw new CourseValidationException($"Semester with id {request.SemesterId} does not exist");
+        }
+
+        if (!await unitOfWork.Subjects.ExistsAsync(request.SubjectId))
+        {
+            throw new CourseValidationException($"Subject with id {request.SubjectId} does not exist");
+        }
     }
 }

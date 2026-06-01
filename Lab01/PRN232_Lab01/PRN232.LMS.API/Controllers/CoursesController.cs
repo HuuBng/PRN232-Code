@@ -61,8 +61,42 @@ namespace PRN232.LMS.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCourse([FromBody] CourseRequest request)
         {
-            var course = await courseService.CreateCourseAsync(request);
-            return CreatedAtAction(nameof(GetCourseById), new { id = course.CourseId }, ApiResponse<CourseResponse>.Ok(course, "Course created successfully"));
+            try
+            {
+                var course = await courseService.CreateCourseAsync(request);
+                return CreatedAtAction(nameof(GetCourseById), new { id = course.CourseId }, ApiResponse<CourseResponse>.Ok(course, "Course created successfully"));
+            }
+            catch (CourseValidationException ex)
+            {
+                return BadRequest(ApiResponse<CourseResponse>.Fail(ex.Message));
+            }
+        }
+
+        /// <summary>
+        ///     Creates a course attached to a specific semester route.
+        /// </summary>
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpPost("/api/semesters/{semesterId:int}/courses")]
+        public async Task<IActionResult> CreateCourseForSemester(int semesterId, [FromBody] CourseForSemesterRequest request)
+        {
+            var courseRequest = new CourseRequest
+            {
+                CourseName = request.CourseName,
+                SemesterId = semesterId,
+                SubjectId = request.SubjectId
+            };
+
+            try
+            {
+                var course = await courseService.CreateCourseAsync(courseRequest);
+                return CreatedAtAction(nameof(GetCourseById), new { id = course.CourseId }, ApiResponse<CourseResponse>.Ok(course, "Course created successfully"));
+            }
+            catch (CourseValidationException ex)
+            {
+                return BadRequest(ApiResponse<CourseResponse>.Fail(ex.Message));
+            }
         }
 
         /// <summary>
@@ -75,10 +109,17 @@ namespace PRN232.LMS.API.Controllers
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateCourse(int id, [FromBody] CourseRequest request)
         {
-            var course = await courseService.UpdateCourseAsync(id, request);
-            return course == null
-                ? NotFound(ApiResponse<CourseResponse>.Fail("Course not found"))
-                : Ok(ApiResponse<CourseResponse>.Ok(course, "Course updated successfully"));
+            try
+            {
+                var course = await courseService.UpdateCourseAsync(id, request);
+                return course == null
+                    ? NotFound(ApiResponse<CourseResponse>.Fail("Course not found"))
+                    : Ok(ApiResponse<CourseResponse>.Ok(course, "Course updated successfully"));
+            }
+            catch (CourseValidationException ex)
+            {
+                return BadRequest(ApiResponse<CourseResponse>.Fail(ex.Message));
+            }
         }
 
         /// <summary>
