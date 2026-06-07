@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using PRN232.LMS.Services.Interfaces;
 using PRN232.LMS.Services.Models.Common;
@@ -8,7 +9,9 @@ namespace PRN232.LMS.API.Controllers
     ///     Mô hình/lớp xử lý cho StudentsController.
     /// </summary>
     [ApiController]
+    [ApiVersion("1.0")]
     [Route("api/students")]
+    [Route("api/v{version:apiVersion}/students")]
     public class StudentsController(IStudentService studentService) : ControllerBase
     {
         /// <summary>
@@ -44,7 +47,7 @@ namespace PRN232.LMS.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetStudentById(int id, [FromQuery] string? expand, [FromQuery] string? fields)
+        public async Task<IActionResult> GetStudentById([FromRoute] int id, [FromQuery] string? expand, [FromQuery] string? fields, [FromHeader(Name = "X-Request-Id")] string? requestId)
         {
             var student = await studentService.GetStudentByIdAsync(id, expand);
             if (student == null)

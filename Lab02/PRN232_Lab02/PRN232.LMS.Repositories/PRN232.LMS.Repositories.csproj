@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Folder Include="Entities\"/>
+        <Folder Include="Entities\" />
     </ItemGroup>
 
     <ItemGroup>
@@ -15,7 +15,8 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4"/>
+        <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="9.0.16" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     </ItemGroup>
 
 </Project>

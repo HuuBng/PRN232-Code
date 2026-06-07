@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using PRN232.LMS.Services.Validation;
 namespace PRN232.LMS.Services.Models.Students
 {
     /// <summary>
@@ -20,6 +21,18 @@ namespace PRN232.LMS.Services.Models.Students
         [EmailAddress]
         [StringLength(100)]
         public string Email { get; set; } = string.Empty;
+
+        /// <summary>
+        ///     Số điện thoại sinh viên.
+        /// </summary>
+        [Phone]
+        public string? PhoneNumber { get; set; }
+
+        /// <summary>
+        ///     Mã sinh viên theo định dạng FPTU, ví dụ SE19886 hoặc CE18793.
+        /// </summary>
+        [FptStudentCode]
+        public string? StudentCode { get; set; }
 
         /// <summary>
         ///     Ngày sinh sinh viên.

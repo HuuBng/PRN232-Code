@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using PRN232.LMS.Services.Interfaces;
 using PRN232.LMS.Services.Models.Common;
@@ -8,7 +9,9 @@ namespace PRN232.LMS.API.Controllers
     ///     Mô hình/lớp xử lý cho SemestersController.
     /// </summary>
     [ApiController]
+    [ApiVersion("1.0")]
     [Route("api/semesters")]
+    [Route("api/v{version:apiVersion}/semesters")]
     public class SemestersController(ISemesterService semesterService) : ControllerBase
     {
         /// <summary>

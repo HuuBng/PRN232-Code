@@ -32,6 +32,16 @@ namespace PRN232.LMS.Repositories.Interfaces
         IGenericRepository<Enrollment> Enrollments { get; }
 
         /// <summary>
+        ///     Repository thao tác với người dùng xác thực.
+        /// </summary>
+        IGenericRepository<User> Users { get; }
+
+        /// <summary>
+        ///     Repository thao tác với refresh token.
+        /// </summary>
+        IGenericRepository<RefreshToken> RefreshTokens { get; }
+
+        /// <summary>
         ///     Lưu toàn bộ thay đổi của các repository xuống database.
         /// </summary>
         Task<int> SaveChangesAsync();

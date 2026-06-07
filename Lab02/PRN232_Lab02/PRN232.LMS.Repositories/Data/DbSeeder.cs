@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PRN232.LMS.Repositories.Entities;
 namespace PRN232.LMS.Repositories.Data
@@ -19,6 +20,33 @@ namespace PRN232.LMS.Repositories.Data
             await SeedSubjectsAsync(context);
             await SeedCoursesAsync(context);
             await SeedEnrollmentsAsync(context);
+            await SeedUsersAsync(context);
+        }
+
+        private static async Task SeedUsersAsync(AppDbContext context)
+        {
+            if (await context.Users.AnyAsync())
+            {
+                return;
+            }
+
+            var hasher = new PasswordHasher<User>();
+            var admin = new User
+            {
+                Username = "admin",
+                Role = "Admin"
+            };
+            admin.PasswordHash = hasher.HashPassword(admin, "12345");
+
+            var user = new User
+            {
+                Username = "student",
+                Role = "User"
+            };
+            user.PasswordHash = hasher.HashPassword(user, "12345");
+
+            context.Users.AddRange(admin, user);
+            await context.SaveChangesAsync();
         }
 
         private static async Task SeedSemestersAsync(AppDbContext context)

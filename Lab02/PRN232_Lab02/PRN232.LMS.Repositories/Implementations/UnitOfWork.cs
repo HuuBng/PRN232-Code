@@ -21,6 +21,8 @@ namespace PRN232.LMS.Repositories.Implementations
             Semesters = new GenericRepository<Semester>(_context);
             Courses = new GenericRepository<Course>(_context);
             Enrollments = new GenericRepository<Enrollment>(_context);
+            Users = new GenericRepository<User>(_context);
+            RefreshTokens = new GenericRepository<RefreshToken>(_context);
         }
 
         /// <inheritdoc />
@@ -37,6 +39,12 @@ namespace PRN232.LMS.Repositories.Implementations
 
         /// <inheritdoc />
         public IGenericRepository<Enrollment> Enrollments { get; }
+
+        /// <inheritdoc />
+        public IGenericRepository<User> Users { get; }
+
+        /// <inheritdoc />
+        public IGenericRepository<RefreshToken> RefreshTokens { get; }
 
         /// <inheritdoc />
         public Task<int> SaveChangesAsync()

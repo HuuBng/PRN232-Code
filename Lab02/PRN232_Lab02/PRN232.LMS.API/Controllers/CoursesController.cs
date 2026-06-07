@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using PRN232.LMS.Services.Interfaces;
 using PRN232.LMS.Services.Models.Common;
@@ -8,7 +9,9 @@ namespace PRN232.LMS.API.Controllers
     ///     Mô hình/lớp xử lý cho CoursesController.
     /// </summary>
     [ApiController]
+    [ApiVersion("1.0")]
     [Route("api/courses")]
+    [Route("api/v{version:apiVersion}/courses")]
     public class CoursesController(ICourseService courseService) : ControllerBase
     {
         /// <summary>
@@ -79,6 +82,7 @@ namespace PRN232.LMS.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPost("/api/semesters/{semesterId:int}/courses")]
+        [HttpPost("/api/v{version:apiVersion}/semesters/{semesterId:int}/courses")]
         public async Task<IActionResult> CreateCourseForSemester(int semesterId, [FromBody] CourseForSemesterRequest request)
         {
             try

@@ -9,6 +9,9 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
       ConnectionStrings__DefaultConnection: Host=postgres;Database=PRN232_LMS_Lab02;Username=postgres;Password=12345
+      Jwt__Secret: ${JWT_SECRET:-LAB02_DOCKER_SECRET_REPLACE_WITH_ENVIRONMENT_VARIABLE_32_CHARS}
+      Jwt__Issuer: PRN232.LMS.API
+      Jwt__Audience: PRN232.LMS.Client
     ports:
       - "8080:8080"
     depends_on:
@@ -29,6 +32,20 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    ports:
+      - "5433:5432"
+      
+  dozzle:
+    image: amir20/dozzle:latest
+    container_name: prn232-lab02-dozzle
+    restart: unless-stopped
+    ports:
+      - "9999:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - api
+      - postgres
 
 volumes:
   prn232_lab02_lms_postgres_data:
