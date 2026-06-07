@@ -14,5 +14,6 @@ namespace PRN232.LMS.Services.Interfaces
         Task<CourseResponse> CreateCourseAsync(CourseRequest request);
         Task<CourseResponse?> UpdateCourseAsync(int id, CourseRequest request);
         Task<bool> DeleteCourseAsync(int id);
+        Task<int> GetDefaultSubjectIdAsync();
     }
 }

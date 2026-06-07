@@ -55,8 +55,6 @@ namespace PRN232.LMS.Repositories.Data
 
                 entity.ToTable("enrollments");
 
-                entity.HasIndex(e => new { e.StudentId, e.CourseId }, "uq_student_course").IsUnique();
-
                 entity.Property(e => e.EnrollmentId).HasColumnName("enrollment_id");
                 entity.Property(e => e.CourseId).HasColumnName("course_id");
                 entity.Property(e => e.EnrollDate)

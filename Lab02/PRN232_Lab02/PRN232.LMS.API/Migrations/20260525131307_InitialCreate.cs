@@ -128,12 +128,6 @@ namespace PRN232.LMS.API.Migrations
                 column: "course_id");
 
             migrationBuilder.CreateIndex(
-                name: "uq_student_course",
-                table: "enrollments",
-                columns: new[] { "student_id", "course_id" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "students_email_key",
                 table: "students",
                 column: "email",

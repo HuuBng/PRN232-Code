@@ -15,8 +15,8 @@ namespace PRN232.LMS.Services.Models.Courses
 
         /// <summary>
         ///     Giá trị SubjectId trong request/response.
+        ///     Optional for the nested semester route because the lab course structure is semester-based.
         /// </summary>
-        [Range(1, int.MaxValue)]
-        public int SubjectId { get; set; }
+        public int? SubjectId { get; set; }
     }
 }

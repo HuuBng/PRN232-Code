@@ -90,9 +90,6 @@ namespace PRN232.LMS.API.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.HasIndex(new[] { "StudentId", "CourseId" }, "uq_student_course")
-                        .IsUnique();
-
                     b.ToTable("enrollments", (string)null);
                 });
 

@@ -124,6 +124,20 @@ public class CourseService(IUnitOfWork unitOfWork) : ICourseService
         return true;
     }
 
+    public async Task<int> GetDefaultSubjectIdAsync()
+    {
+        var subject = await unitOfWork.Subjects.GetAll()
+            .OrderBy(s => s.SubjectId)
+            .FirstOrDefaultAsync();
+
+        if (subject == null)
+        {
+            throw new CourseValidationException("Subject does not exist");
+        }
+
+        return subject.SubjectId;
+    }
+
     private static CourseModel ToModel(Course course, bool includeSemester, bool includeSubject)
     {
         return new CourseModel

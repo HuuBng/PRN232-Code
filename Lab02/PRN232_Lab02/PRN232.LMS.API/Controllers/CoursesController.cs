@@ -81,15 +81,16 @@ namespace PRN232.LMS.API.Controllers
         [HttpPost("/api/semesters/{semesterId:int}/courses")]
         public async Task<IActionResult> CreateCourseForSemester(int semesterId, [FromBody] CourseForSemesterRequest request)
         {
-            var courseRequest = new CourseRequest
-            {
-                CourseName = request.CourseName,
-                SemesterId = semesterId,
-                SubjectId = request.SubjectId
-            };
-
             try
             {
+                var subjectId = request.SubjectId ?? await courseService.GetDefaultSubjectIdAsync();
+                var courseRequest = new CourseRequest
+                {
+                    CourseName = request.CourseName,
+                    SemesterId = semesterId,
+                    SubjectId = subjectId
+                };
+
                 var course = await courseService.CreateCourseAsync(courseRequest);
                 return CreatedAtAction(nameof(GetCourseById), new { id = course.CourseId }, ApiResponse<CourseResponse>.Ok(course, "Course created successfully"));
             }

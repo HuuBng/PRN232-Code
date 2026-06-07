@@ -193,14 +193,5 @@ public class EnrollmentService(IUnitOfWork unitOfWork) : IEnrollmentService
             throw new EnrollmentValidationException($"Course with id {request.CourseId} does not exist");
         }
 
-        var duplicateEnrollment = await unitOfWork.Enrollments.FirstOrDefaultAsync(e =>
-            e.StudentId == request.StudentId &&
-            e.CourseId == request.CourseId &&
-            (!currentEnrollmentId.HasValue || e.EnrollmentId != currentEnrollmentId.Value));
-
-        if (duplicateEnrollment != null)
-        {
-            throw new EnrollmentValidationException("Student is already enrolled in this course");
-        }
     }
 }
