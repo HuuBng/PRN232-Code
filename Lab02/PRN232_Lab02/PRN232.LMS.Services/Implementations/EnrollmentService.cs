@@ -79,6 +79,8 @@ public class EnrollmentService(IUnitOfWork unitOfWork) : IEnrollmentService
     /// </summary>
     public async Task<EnrollmentResponse> CreateEnrollmentAsync(EnrollmentRequest request)
     {
+        await ValidateReferencesAsync(request);
+
         var enrollment = new Enrollment
         {
             StudentId = request.StudentId,
@@ -99,6 +101,8 @@ public class EnrollmentService(IUnitOfWork unitOfWork) : IEnrollmentService
     {
         var enrollment = await unitOfWork.Enrollments.GetByIdAsync(id);
         if (enrollment == null) return null;
+
+        await ValidateReferencesAsync(request, id);
 
         enrollment.StudentId = request.StudentId;
         enrollment.CourseId = request.CourseId;
@@ -175,5 +179,28 @@ public class EnrollmentService(IUnitOfWork unitOfWork) : IEnrollmentService
                     CourseName = enrollment.Course.CourseName
                 }
         };
+    }
+
+    private async Task ValidateReferencesAsync(EnrollmentRequest request, int? currentEnrollmentId = null)
+    {
+        if (!await unitOfWork.Students.ExistsAsync(request.StudentId))
+        {
+            throw new EnrollmentValidationException($"Student with id {request.StudentId} does not exist");
+        }
+
+        if (!await unitOfWork.Courses.ExistsAsync(request.CourseId))
+        {
+            throw new EnrollmentValidationException($"Course with id {request.CourseId} does not exist");
+        }
+
+        var duplicateEnrollment = await unitOfWork.Enrollments.FirstOrDefaultAsync(e =>
+            e.StudentId == request.StudentId &&
+            e.CourseId == request.CourseId &&
+            (!currentEnrollmentId.HasValue || e.EnrollmentId != currentEnrollmentId.Value));
+
+        if (duplicateEnrollment != null)
+        {
+            throw new EnrollmentValidationException("Student is already enrolled in this course");
+        }
     }
 }

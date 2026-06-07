@@ -61,8 +61,15 @@ namespace PRN232.LMS.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateEnrollment([FromBody] EnrollmentRequest request)
         {
-            var enrollment = await enrollmentService.CreateEnrollmentAsync(request);
-            return CreatedAtAction(nameof(GetEnrollmentById), new { id = enrollment.EnrollmentId }, ApiResponse<EnrollmentResponse>.Ok(enrollment, "Enrollment created successfully"));
+            try
+            {
+                var enrollment = await enrollmentService.CreateEnrollmentAsync(request);
+                return CreatedAtAction(nameof(GetEnrollmentById), new { id = enrollment.EnrollmentId }, ApiResponse<EnrollmentResponse>.Ok(enrollment, "Enrollment created successfully"));
+            }
+            catch (EnrollmentValidationException ex)
+            {
+                return BadRequest(ApiResponse<EnrollmentResponse>.Fail(ex.Message));
+            }
         }
 
 
@@ -76,10 +83,17 @@ namespace PRN232.LMS.API.Controllers
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateEnrollment(int id, [FromBody] EnrollmentRequest request)
         {
-            var enrollment = await enrollmentService.UpdateEnrollmentAsync(id, request);
-            return enrollment == null
-                ? NotFound(ApiResponse<EnrollmentResponse>.Fail("Enrollment not found"))
-                : Ok(ApiResponse<EnrollmentResponse>.Ok(enrollment, "Enrollment updated successfully"));
+            try
+            {
+                var enrollment = await enrollmentService.UpdateEnrollmentAsync(id, request);
+                return enrollment == null
+                    ? NotFound(ApiResponse<EnrollmentResponse>.Fail("Enrollment not found"))
+                    : Ok(ApiResponse<EnrollmentResponse>.Ok(enrollment, "Enrollment updated successfully"));
+            }
+            catch (EnrollmentValidationException ex)
+            {
+                return BadRequest(ApiResponse<EnrollmentResponse>.Fail(ex.Message));
+            }
         }
 
         /// <summary>
