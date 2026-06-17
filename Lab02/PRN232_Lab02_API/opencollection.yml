@@ -1,0 +1,35 @@
+opencollection: 1.0.0
+
+info:
+  name: PRN232_Lab02_API
+config:
+  proxy:
+    inherit: true
+    config:
+      protocol: http
+      hostname: ""
+      port: ""
+      auth:
+        username: ""
+        password: ""
+      bypassProxy: ""
+
+request:
+  auth:
+    type: bearer
+    token: "{{token}}"
+  variables:
+    - name: baseUrl
+      value: http://localhost:8080
+    - name: token
+      value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwidW5pcXVlX25hbWUiOiJzdHVkZW50IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6InN0dWRlbnQiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwianRpIjoiMTQzYTYzOWQtNjFmYi00ZjdkLWIxNDctZjgxOGVkZTMzNTJkIiwiZXhwIjoxNzgxNzE1NDU2LCJpc3MiOiJQUk4yMzIuTE1TLkFQSSIsImF1ZCI6IlBSTjIzMi5MTVMuQ2xpZW50In0.PN8kxCd4HGd7KceigRpua589sxL4riFSJSPvk08MwsE
+bundled: false
+extensions:
+  bruno:
+    ignore:
+      - node_modules
+      - .git
+    presets:
+      request:
+        type: http
+        url: http://localhost:8080

@@ -1,0 +1,139 @@
+info:
+  name: post /api/semesters/:semesterId/courses
+  type: http
+  seq: 11
+  tags:
+    - Courses
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/semesters/:semesterId/courses"
+  params:
+    - name: semesterId
+      value: ""
+      type: path
+  body:
+    type: json
+    data: |-
+      {
+        "courseName": "",
+        "subjectId": 0
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+examples:
+  - name: 201 Response
+    description: Created
+    request:
+      url: "{{baseUrl}}/api/semesters/:semesterId/courses"
+      method: POST
+      params:
+        - name: semesterId
+          value: ""
+          type: path
+      body:
+        type: json
+        data: |-
+          {
+            "courseName": "",
+            "subjectId": 0
+          }
+    response:
+      status: 201
+      statusText: Created
+      body:
+        type: text
+        data: ""
+  - name: 400 Response
+    description: Bad Request
+    request:
+      url: "{{baseUrl}}/api/semesters/:semesterId/courses"
+      method: POST
+      params:
+        - name: semesterId
+          value: ""
+          type: path
+      body:
+        type: json
+        data: |-
+          {
+            "courseName": "",
+            "subjectId": 0
+          }
+    response:
+      status: 400
+      statusText: Bad Request
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "type": "",
+            "title": "",
+            "status": 0,
+            "detail": "",
+            "instance": ""
+          }
+  - name: 400 Response
+    description: Bad Request
+    request:
+      url: "{{baseUrl}}/api/semesters/:semesterId/courses"
+      method: POST
+      params:
+        - name: semesterId
+          value: ""
+          type: path
+      body:
+        type: json
+        data: |-
+          {
+            "courseName": "",
+            "subjectId": 0
+          }
+    response:
+      status: 400
+      statusText: Bad Request
+      headers:
+        - name: Content-Type
+          value: application/xml
+      body:
+        type: xml
+        data: |-
+          <?xml version="1.0" encoding="UTF-8"?>
+          <root>
+            <type></type>
+            <title></title>
+            <status>0</status>
+            <detail></detail>
+            <instance></instance>
+          </root>
+  - name: 500 Response
+    description: Internal Server Error
+    request:
+      url: "{{baseUrl}}/api/semesters/:semesterId/courses"
+      method: POST
+      params:
+        - name: semesterId
+          value: ""
+          type: path
+      body:
+        type: json
+        data: |-
+          {
+            "courseName": "",
+            "subjectId": 0
+          }
+    response:
+      status: 500
+      statusText: Internal Server Error
+      body:
+        type: text
+        data: ""
