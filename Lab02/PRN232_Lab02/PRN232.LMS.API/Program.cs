@@ -1,4 +1,3 @@
-using System.Text;
 using Asp.Versioning;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -15,7 +14,7 @@ using PRN232.LMS.Services.Implementations;
 using PRN232.LMS.Services.Interfaces;
 using PRN232.LMS.Services.Models.Common;
 using PRN232.LMS.Services.Validation;
-
+using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 var jwtSecret = builder.Configuration["Jwt:Secret"] ?? throw new InvalidOperationException("Jwt:Secret must be configured.");

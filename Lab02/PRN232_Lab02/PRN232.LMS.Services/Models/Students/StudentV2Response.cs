@@ -1,7 +1,7 @@
 namespace PRN232.LMS.Services.Models.Students
 {
     /// <summary>
-    ///     v2 response: superset of <see cref="StudentResponse"/> that exposes
+    ///     v2 response: superset of <see cref="StudentResponse" /> that exposes
     ///     the optional <c>PhoneNumber</c> and <c>StudentCode</c> fields.
     /// </summary>
     public class StudentV2Response

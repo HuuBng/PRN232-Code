@@ -1,6 +1,5 @@
-using System.Text.Json;
 using PRN232.LMS.Services.Models.Common;
-
+using System.Text.Json;
 namespace PRN232.LMS.API.Middleware
 {
     public class GlobalExceptionHandlingMiddleware(RequestDelegate next, ILogger<GlobalExceptionHandlingMiddleware> logger)

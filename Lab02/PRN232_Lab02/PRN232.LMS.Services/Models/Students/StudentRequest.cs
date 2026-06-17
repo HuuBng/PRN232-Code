@@ -1,5 +1,5 @@
-using System.ComponentModel.DataAnnotations;
 using PRN232.LMS.Services.Validation;
+using System.ComponentModel.DataAnnotations;
 namespace PRN232.LMS.Services.Models.Students
 {
     /// <summary>

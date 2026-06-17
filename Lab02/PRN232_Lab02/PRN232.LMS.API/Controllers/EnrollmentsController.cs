@@ -48,7 +48,10 @@ namespace PRN232.LMS.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetEnrollmentById(int id, [FromQuery] string? expand, [FromQuery] string? fields)
+        public async Task<IActionResult> GetEnrollmentById(
+            int id,
+            [FromQuery] string? expand,
+            [FromQuery] string? fields)
         {
             var enrollment = await enrollmentService.GetEnrollmentByIdAsync(id, expand);
             return enrollment == null

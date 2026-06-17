@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using PRN232.LMS.Services.Interfaces;
 using PRN232.LMS.Services.Models.Auth;
 using PRN232.LMS.Services.Models.Common;
-
 namespace PRN232.LMS.API.Controllers
 {
     [ApiController]

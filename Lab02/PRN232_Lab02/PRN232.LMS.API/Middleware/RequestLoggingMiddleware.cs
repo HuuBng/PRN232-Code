@@ -1,5 +1,4 @@
 using System.Diagnostics;
-
 namespace PRN232.LMS.API.Middleware
 {
     public class RequestLoggingMiddleware(RequestDelegate next, ILogger<RequestLoggingMiddleware> logger)

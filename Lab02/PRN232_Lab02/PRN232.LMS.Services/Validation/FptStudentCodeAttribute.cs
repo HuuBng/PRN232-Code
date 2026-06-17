@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-
 namespace PRN232.LMS.Services.Validation
 {
     public class FptStudentCodeAttribute : RegularExpressionAttribute

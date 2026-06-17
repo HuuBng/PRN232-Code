@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using PRN232.LMS.Services.Interfaces;
 using PRN232.LMS.Services.Models.Common;
 using PRN232.LMS.Services.Models.Students;
-
 namespace PRN232.LMS.API.Controllers
 {
     /// <summary>

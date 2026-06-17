@@ -48,7 +48,10 @@ namespace PRN232.LMS.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetCourseById(int id, [FromQuery] string? expand, [FromQuery] string? fields)
+        public async Task<IActionResult> GetCourseById(
+            int id,
+            [FromQuery] string? expand,
+            [FromQuery] string? fields)
         {
             var course = await courseService.GetCourseByIdAsync(id, expand);
             return course == null

@@ -1,7 +1,3 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -9,13 +5,16 @@ using PRN232.LMS.Repositories.Entities;
 using PRN232.LMS.Repositories.Interfaces;
 using PRN232.LMS.Services.Interfaces;
 using PRN232.LMS.Services.Models.Auth;
-
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 namespace PRN232.LMS.Services.Implementations
 {
     public class AuthService(IUnitOfWork unitOfWork, IConfiguration configuration) : IAuthService
     {
         private const int AccessTokenExpiresInSeconds = 3600;
-        private static readonly PasswordHasher<User> PasswordHasher = new();
+        private static readonly PasswordHasher<User> PasswordHasher = new PasswordHasher<User>();
 
         public async Task<AuthTokenResponse?> LoginAsync(LoginRequest request)
         {
@@ -98,9 +97,9 @@ namespace PRN232.LMS.Services.Implementations
             };
 
             var token = new JwtSecurityToken(
-                issuer: issuer,
-                audience: audience,
-                claims: claims,
+                issuer,
+                audience,
+                claims,
                 expires: DateTime.UtcNow.AddSeconds(AccessTokenExpiresInSeconds),
                 signingCredentials: credentials);
 
