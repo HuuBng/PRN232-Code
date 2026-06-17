@@ -12,6 +12,7 @@ namespace PRN232.LMS.API.Controllers
     /// </summary>
     [ApiController]
     [ApiVersion("2.0")]
+    [Produces("application/json", "application/xml")]
     [Route("api/v{version:apiVersion}/students")]
     public class StudentsV2Controller(IStudentService studentService) : ControllerBase
     {
@@ -32,8 +33,9 @@ namespace PRN232.LMS.API.Controllers
                 return NotFound(ApiResponse<StudentV2Response>.Fail("Student not found"));
             }
 
-            return Ok(ApiResponse<object>.Ok(
-                FieldSelector.HasFields(fields) ? FieldSelector.SelectFields(student, fields) : student));
+            return Ok(FieldSelector.HasFields(fields)
+                ? ApiResponse<object>.Ok(FieldSelector.SelectFields(student, fields))
+                : ApiResponse<StudentV2Response>.Ok(student));
         }
     }
 }

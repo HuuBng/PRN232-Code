@@ -10,6 +10,7 @@ namespace PRN232.LMS.API.Controllers
     /// </summary>
     [ApiController]
     [ApiVersion("1.0")]
+    [Produces("application/json", "application/xml")]
     [Route("api/subjects")]
     [Route("api/v{version:apiVersion}/subjects")]
     public class SubjectsController(ISubjectService subjectService) : ControllerBase
@@ -52,7 +53,9 @@ namespace PRN232.LMS.API.Controllers
             var subject = await subjectService.GetSubjectByIdAsync(id);
             return subject == null
                 ? NotFound(ApiResponse<SubjectResponse>.Fail("Subject not found"))
-                : Ok(ApiResponse<object>.Ok(FieldSelector.HasFields(fields) ? FieldSelector.SelectFields(subject, fields) : subject));
+                : Ok(FieldSelector.HasFields(fields)
+                    ? ApiResponse<object>.Ok(FieldSelector.SelectFields(subject, fields))
+                    : ApiResponse<SubjectResponse>.Ok(subject));
         }
 
         /// <summary>

@@ -8,6 +8,7 @@ namespace PRN232.LMS.API.Controllers
 {
     [ApiController]
     [ApiVersion("1.0")]
+    [Produces("application/json", "application/xml")]
     [Route("api/auth")]
     [Route("api/v{version:apiVersion}/auth")]
     public class AuthController(IAuthService authService) : ControllerBase

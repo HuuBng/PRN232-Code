@@ -10,6 +10,7 @@ namespace PRN232.LMS.API.Controllers
     /// </summary>
     [ApiController]
     [ApiVersion("1.0")]
+    [Produces("application/json", "application/xml")]
     [Route("api/enrollments")]
     [Route("api/v{version:apiVersion}/enrollments")]
     public class EnrollmentsController(IEnrollmentService enrollmentService) : ControllerBase
@@ -52,7 +53,9 @@ namespace PRN232.LMS.API.Controllers
             var enrollment = await enrollmentService.GetEnrollmentByIdAsync(id, expand);
             return enrollment == null
                 ? NotFound(ApiResponse<EnrollmentResponse>.Fail("Enrollment not found"))
-                : Ok(ApiResponse<object>.Ok(FieldSelector.HasFields(fields) ? FieldSelector.SelectFields(enrollment, fields) : enrollment));
+                : Ok(FieldSelector.HasFields(fields)
+                    ? ApiResponse<object>.Ok(FieldSelector.SelectFields(enrollment, fields))
+                    : ApiResponse<EnrollmentResponse>.Ok(enrollment));
         }
 
         /// <summary>

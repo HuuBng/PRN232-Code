@@ -29,7 +29,7 @@ builder.Services
     {
         options.ReturnHttpNotAcceptable = true;
     })
-    .AddXmlSerializerFormatters()
+    .AddXmlDataContractSerializerFormatters()
     .ConfigureApiBehaviorOptions(options =>
     {
         options.InvalidModelStateResponseFactory = context =>

@@ -10,6 +10,7 @@ namespace PRN232.LMS.API.Controllers
     /// </summary>
     [ApiController]
     [ApiVersion("1.0")]
+    [Produces("application/json", "application/xml")]
     [Route("api/courses")]
     [Route("api/v{version:apiVersion}/courses")]
     public class CoursesController(ICourseService courseService) : ControllerBase
@@ -52,7 +53,9 @@ namespace PRN232.LMS.API.Controllers
             var course = await courseService.GetCourseByIdAsync(id, expand);
             return course == null
                 ? NotFound(ApiResponse<CourseResponse>.Fail("Course not found"))
-                : Ok(ApiResponse<object>.Ok(FieldSelector.HasFields(fields) ? FieldSelector.SelectFields(course, fields) : course));
+                : Ok(FieldSelector.HasFields(fields)
+                    ? ApiResponse<object>.Ok(FieldSelector.SelectFields(course, fields))
+                    : ApiResponse<CourseResponse>.Ok(course));
         }
 
         /// <summary>

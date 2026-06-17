@@ -8,6 +8,7 @@ namespace PRN232.LMS.API.Controllers
     [ApiController]
     [Authorize(Roles = "Admin")]
     [ApiVersion("1.0")]
+    [Produces("application/json", "application/xml")]
     [Route("api/admin")]
     [Route("api/v{version:apiVersion}/admin")]
     public class AdminController : ControllerBase

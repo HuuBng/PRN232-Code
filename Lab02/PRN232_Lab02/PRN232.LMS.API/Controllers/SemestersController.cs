@@ -10,6 +10,7 @@ namespace PRN232.LMS.API.Controllers
     /// </summary>
     [ApiController]
     [ApiVersion("1.0")]
+    [Produces("application/json", "application/xml")]
     [Route("api/semesters")]
     [Route("api/v{version:apiVersion}/semesters")]
     public class SemestersController(ISemesterService semesterService) : ControllerBase
@@ -52,7 +53,9 @@ namespace PRN232.LMS.API.Controllers
             var semester = await semesterService.GetSemesterByIdAsync(id);
             return semester == null
                 ? NotFound(ApiResponse<SemesterResponse>.Fail("Semester not found"))
-                : Ok(ApiResponse<object>.Ok(FieldSelector.HasFields(fields) ? FieldSelector.SelectFields(semester, fields) : semester));
+                : Ok(FieldSelector.HasFields(fields)
+                    ? ApiResponse<object>.Ok(FieldSelector.SelectFields(semester, fields))
+                    : ApiResponse<SemesterResponse>.Ok(semester));
         }
 
         /// <summary>
