@@ -12,5 +12,6 @@ namespace PRN232.LMS.Services.Interfaces
         Task<StudentResponse> CreateStudentAsync(StudentRequest request);
         Task<StudentResponse?> UpdateStudentAsync(int id, StudentRequest request);
         Task<bool> DeleteStudentAsync(int id);
+        Task<StudentV2Response?> GetStudentByIdV2Async(int id, string? expand = null);
     }
 }

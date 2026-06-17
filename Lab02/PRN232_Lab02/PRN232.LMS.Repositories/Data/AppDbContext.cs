@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PRN232.LMS.Repositories.Entities;
 namespace PRN232.LMS.Repositories.Data
 {
@@ -114,6 +114,12 @@ namespace PRN232.LMS.Repositories.Data
                 entity.Property(e => e.FullName)
                     .HasMaxLength(100)
                     .HasColumnName("full_name");
+                entity.Property(e => e.PhoneNumber)
+                    .HasMaxLength(20)
+                    .HasColumnName("phone_number");
+                entity.Property(e => e.StudentCode)
+                    .HasMaxLength(20)
+                    .HasColumnName("student_code");
             });
 
             modelBuilder.Entity<Subject>(entity =>

@@ -61,6 +61,7 @@ builder.Services.AddApiVersioning(options =>
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "PRN232 LMS API", Version = "v1" });
+    options.SwaggerDoc("v2", new OpenApiInfo { Title = "PRN232 LMS API", Version = "v2" });
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -138,6 +139,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(options =>
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "PRN232 LMS API v1");
+        options.SwaggerEndpoint("/swagger/v2/swagger.json", "PRN232 LMS API v2");
     });
 }
 

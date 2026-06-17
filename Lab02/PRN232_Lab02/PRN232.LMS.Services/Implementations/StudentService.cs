@@ -78,6 +78,47 @@ namespace PRN232.LMS.Services.Implementations
         }
 
         /// <summary>
+        ///     v2: returns the same shape as GetStudentByIdAsync but also
+        ///     surfaces <c>PhoneNumber</c> and <c>StudentCode</c>.
+        /// </summary>
+        public async Task<StudentV2Response?> GetStudentByIdV2Async(int id, string? expand = null)
+        {
+            var students = unitOfWork.Students.GetAll();
+            var includeEnrollments = SortHelper.ShouldExpand(expand, "enrollments");
+
+            if (includeEnrollments)
+            {
+                students = students.Include(s => s.Enrollments).ThenInclude(e => e.Course);
+            }
+
+            var student = await students.FirstOrDefaultAsync(s => s.StudentId == id);
+            if (student == null)
+            {
+                return null;
+            }
+
+            return new StudentV2Response
+            {
+                StudentId = student.StudentId,
+                FullName = student.FullName,
+                Email = student.Email,
+                DateOfBirth = student.DateOfBirth,
+                PhoneNumber = student.PhoneNumber,
+                StudentCode = student.StudentCode,
+                Enrollments = includeEnrollments
+                    ? student.Enrollments.Select(e => new StudentEnrollmentResponse
+                    {
+                        EnrollmentId = e.EnrollmentId,
+                        CourseId = e.CourseId,
+                        CourseName = e.Course?.CourseName ?? string.Empty,
+                        EnrollDate = e.EnrollDate,
+                        Status = e.Status
+                    })
+                    : null
+            };
+        }
+
+        /// <summary>
         ///     Xử lý request/nghiệp vụ CreateStudentAsync.
         /// </summary>
         public async Task<StudentResponse> CreateStudentAsync(StudentRequest request)

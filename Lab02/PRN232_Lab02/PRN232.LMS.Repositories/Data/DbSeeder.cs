@@ -122,7 +122,9 @@ namespace PRN232.LMS.Repositories.Data
                 {
                     FullName = $"Student {index:000}",
                     Email = $"student{index:000}@lms.local",
-                    DateOfBirth = new DateTime(2000 + index % 6, index % 12 + 1, index % 27 + 1)
+                    DateOfBirth = new DateTime(2000 + index % 6, index % 12 + 1, index % 27 + 1),
+                    StudentCode = $"SE{index:000000}",
+                    PhoneNumber = $"090{index:D7}"
                 })
                 .Where(s => !existingEmailSet.Contains(s.Email))
                 .Take(RequiredStudentCount - existingCount)

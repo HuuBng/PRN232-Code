@@ -1,4 +1,4 @@
-﻿namespace PRN232.LMS.Repositories.Entities
+namespace PRN232.LMS.Repositories.Entities
 {
     public class Student
     {
@@ -9,6 +9,10 @@
         public string Email { get; set; } = null!;
 
         public DateTime DateOfBirth { get; set; }
+
+        public string? PhoneNumber { get; set; }
+
+        public string? StudentCode { get; set; }
 
         public virtual ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
     }
