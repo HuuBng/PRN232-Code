@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PRN232.LMS.Services.Interfaces;
 using PRN232.LMS.Services.Models.Auth;
@@ -6,6 +7,7 @@ using PRN232.LMS.Services.Models.Common;
 namespace PRN232.LMS.API.Controllers
 {
     [ApiController]
+    [AllowAnonymous]
     [ApiVersion("1.0")]
     [Produces("application/json", "application/xml")]
     [Route("api/auth")]
@@ -13,8 +15,8 @@ namespace PRN232.LMS.API.Controllers
     public class AuthController(IAuthService authService) : ControllerBase
     {
         [HttpPost("login")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<AuthTokenResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<AuthTokenResponse>), StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             var result = await authService.LoginAsync(request);
@@ -27,8 +29,8 @@ namespace PRN232.LMS.API.Controllers
         }
 
         [HttpPost("refresh-token")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<AuthTokenResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<AuthTokenResponse>), StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
         {
             var result = await authService.RefreshTokenAsync(request);

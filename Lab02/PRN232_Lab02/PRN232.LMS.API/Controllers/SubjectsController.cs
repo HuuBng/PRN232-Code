@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PRN232.LMS.Services.Interfaces;
 using PRN232.LMS.Services.Models.Common;
@@ -13,14 +14,18 @@ namespace PRN232.LMS.API.Controllers
     [Produces("application/json", "application/xml")]
     [Route("api/subjects")]
     [Route("api/v{version:apiVersion}/subjects")]
+    [Authorize]
     public class SubjectsController(ISubjectService subjectService) : ControllerBase
     {
         /// <summary>
         ///     Xử lý request/nghiệp vụ GetSubjects.
         /// </summary>
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<PaginatedResponse<SubjectResponse>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<PaginatedResponse<object>>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Policy = "ReadOrAdmin")]
         [HttpGet]
         public async Task<IActionResult> GetSubjects([FromQuery] QueryParameters query)
         {
@@ -43,10 +48,13 @@ namespace PRN232.LMS.API.Controllers
         /// <summary>
         ///     Xử lý request/nghiệp vụ GetSubjectById.
         /// </summary>
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<SubjectResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<SubjectResponse>), StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Policy = "ReadOrAdmin")]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetSubjectById(int id, [FromQuery] string? fields)
         {
@@ -61,9 +69,12 @@ namespace PRN232.LMS.API.Controllers
         /// <summary>
         ///     Xử lý request/nghiệp vụ CreateSubject.
         /// </summary>
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ApiResponse<SubjectResponse>), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Policy = "AdminOnly")]
         [HttpPost]
         public async Task<IActionResult> CreateSubject([FromBody] SubjectRequest request)
         {
@@ -74,10 +85,13 @@ namespace PRN232.LMS.API.Controllers
         /// <summary>
         ///     Xử lý request/nghiệp vụ UpdateSubject.
         /// </summary>
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<SubjectResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ApiResponse<SubjectResponse>), StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Policy = "AdminOnly")]
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateSubject(int id, [FromBody] SubjectRequest request)
         {
@@ -90,9 +104,12 @@ namespace PRN232.LMS.API.Controllers
         /// <summary>
         ///     Xử lý request/nghiệp vụ DeleteSubject.
         /// </summary>
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Policy = "AdminOnly")]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteSubject(int id)
         {

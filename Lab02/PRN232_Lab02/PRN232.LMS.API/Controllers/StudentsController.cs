@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PRN232.LMS.Services.Interfaces;
 using PRN232.LMS.Services.Models.Common;
@@ -13,14 +14,18 @@ namespace PRN232.LMS.API.Controllers
     [Produces("application/json", "application/xml")]
     [Route("api/students")]
     [Route("api/v{version:apiVersion}/students")]
+    [Authorize]
     public class StudentsController(IStudentService studentService) : ControllerBase
     {
         /// <summary>
         ///     Xử lý request/nghiệp vụ GetStudents.
         /// </summary>
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<PaginatedResponse<StudentResponse>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<PaginatedResponse<object>>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Policy = "ReadOrAdmin")]
         [HttpGet]
         public async Task<IActionResult> GetStudents([FromQuery] QueryParameters query)
         {
@@ -43,10 +48,13 @@ namespace PRN232.LMS.API.Controllers
         /// <summary>
         ///     Xử lý request/nghiệp vụ GetStudentById.
         /// </summary>
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<StudentResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<StudentResponse>), StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Policy = "ReadOrAdmin")]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetStudentById(
             [FromRoute] int id,
@@ -68,9 +76,12 @@ namespace PRN232.LMS.API.Controllers
         /// <summary>
         ///     Xử lý request/nghiệp vụ CreateStudent.
         /// </summary>
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ApiResponse<StudentResponse>), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Policy = "AdminOnly")]
         [HttpPost]
         public async Task<IActionResult> CreateStudent([FromBody] StudentRequest request)
         {
@@ -84,10 +95,13 @@ namespace PRN232.LMS.API.Controllers
         /// <summary>
         ///     Xử lý request/nghiệp vụ UpdateStudent.
         /// </summary>
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<StudentResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ApiResponse<StudentResponse>), StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Policy = "AdminOnly")]
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateStudent(int id, [FromBody] StudentRequest request)
         {
@@ -103,9 +117,12 @@ namespace PRN232.LMS.API.Controllers
         /// <summary>
         ///     Xử lý request/nghiệp vụ DeleteStudent.
         /// </summary>
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Policy = "AdminOnly")]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteStudent(int id)
         {

@@ -101,7 +101,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ClockSkew = TimeSpan.Zero
         };
     });
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("ReadOrAdmin", policy => policy.RequireRole("User", "Admin"));
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+});
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(

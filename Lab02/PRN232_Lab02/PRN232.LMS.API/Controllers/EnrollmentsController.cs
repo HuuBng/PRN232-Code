@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PRN232.LMS.Services.Interfaces;
 using PRN232.LMS.Services.Models.Common;
@@ -13,14 +14,18 @@ namespace PRN232.LMS.API.Controllers
     [Produces("application/json", "application/xml")]
     [Route("api/enrollments")]
     [Route("api/v{version:apiVersion}/enrollments")]
+    [Authorize]
     public class EnrollmentsController(IEnrollmentService enrollmentService) : ControllerBase
     {
         /// <summary>
         ///     Xử lý request/nghiệp vụ GetEnrollments.
         /// </summary>
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<PaginatedResponse<EnrollmentResponse>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<PaginatedResponse<object>>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Policy = "ReadOrAdmin")]
         [HttpGet]
         public async Task<IActionResult> GetEnrollments([FromQuery] QueryParameters query)
         {
@@ -43,10 +48,13 @@ namespace PRN232.LMS.API.Controllers
         /// <summary>
         ///     Xử lý request/nghiệp vụ GetEnrollmentById.
         /// </summary>
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<EnrollmentResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<EnrollmentResponse>), StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Policy = "ReadOrAdmin")]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetEnrollmentById(
             int id,
@@ -64,9 +72,12 @@ namespace PRN232.LMS.API.Controllers
         /// <summary>
         ///     Xử lý request/nghiệp vụ CreateEnrollment.
         /// </summary>
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ApiResponse<EnrollmentResponse>), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Policy = "AdminOnly")]
         [HttpPost]
         public async Task<IActionResult> CreateEnrollment([FromBody] EnrollmentRequest request)
         {
@@ -85,10 +96,13 @@ namespace PRN232.LMS.API.Controllers
         /// <summary>
         ///     Xử lý request/nghiệp vụ UpdateEnrollment.
         /// </summary>
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<EnrollmentResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ApiResponse<EnrollmentResponse>), StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Policy = "AdminOnly")]
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateEnrollment(int id, [FromBody] EnrollmentRequest request)
         {
@@ -108,9 +122,12 @@ namespace PRN232.LMS.API.Controllers
         /// <summary>
         ///     Xử lý request/nghiệp vụ DeleteEnrollment.
         /// </summary>
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Policy = "AdminOnly")]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteEnrollment(int id)
         {

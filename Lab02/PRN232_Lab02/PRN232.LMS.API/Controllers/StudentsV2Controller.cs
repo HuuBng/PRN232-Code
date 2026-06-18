@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PRN232.LMS.Services.Interfaces;
 using PRN232.LMS.Services.Models.Common;
@@ -13,12 +14,17 @@ namespace PRN232.LMS.API.Controllers
     [ApiVersion("2.0")]
     [Produces("application/json", "application/xml")]
     [Route("api/v{version:apiVersion}/students")]
+    [Authorize]
     public class StudentsV2Controller(IStudentService studentService) : ControllerBase
     {
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<StudentV2Response>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ApiResponse<StudentV2Response>), StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Policy = "ReadOrAdmin")]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById(
             [FromRoute] int id,

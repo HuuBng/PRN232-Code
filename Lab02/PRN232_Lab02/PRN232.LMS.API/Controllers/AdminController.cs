@@ -13,7 +13,7 @@ namespace PRN232.LMS.API.Controllers
     public class AdminController : ControllerBase
     {
         [HttpGet("dashboard")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public IActionResult GetDashboard([FromHeader(Name = "X-Request-Id")] string? requestId)

@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PRN232.LMS.Services.Interfaces;
 using PRN232.LMS.Services.Models.Common;
@@ -13,14 +14,18 @@ namespace PRN232.LMS.API.Controllers
     [Produces("application/json", "application/xml")]
     [Route("api/courses")]
     [Route("api/v{version:apiVersion}/courses")]
+    [Authorize]
     public class CoursesController(ICourseService courseService) : ControllerBase
     {
         /// <summary>
         ///     Xử lý request/nghiệp vụ GetCourses.
         /// </summary>
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<PaginatedResponse<CourseResponse>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<PaginatedResponse<object>>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Policy = "ReadOrAdmin")]
         [HttpGet]
         public async Task<IActionResult> GetCourses([FromQuery] QueryParameters query)
         {
@@ -43,10 +48,13 @@ namespace PRN232.LMS.API.Controllers
         /// <summary>
         ///     Xử lý request/nghiệp vụ GetCourseById.
         /// </summary>
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<CourseResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<CourseResponse>), StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Policy = "ReadOrAdmin")]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetCourseById(
             int id,
@@ -64,9 +72,12 @@ namespace PRN232.LMS.API.Controllers
         /// <summary>
         ///     Xử lý request/nghiệp vụ CreateCourse.
         /// </summary>
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ApiResponse<CourseResponse>), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Policy = "AdminOnly")]
         [HttpPost]
         public async Task<IActionResult> CreateCourse([FromBody] CourseRequest request)
         {
@@ -84,11 +95,13 @@ namespace PRN232.LMS.API.Controllers
         /// <summary>
         ///     Creates a course attached to a specific semester route.
         /// </summary>
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ApiResponse<CourseResponse>), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Policy = "AdminOnly")]
         [HttpPost("/api/semesters/{semesterId:int}/courses")]
-        [HttpPost("/api/v{version:apiVersion}/semesters/{semesterId:int}/courses")]
         public async Task<IActionResult> CreateCourseForSemester(int semesterId, [FromBody] CourseForSemesterRequest request)
         {
             try
@@ -113,10 +126,13 @@ namespace PRN232.LMS.API.Controllers
         /// <summary>
         ///     Xử lý request/nghiệp vụ UpdateCourse.
         /// </summary>
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<CourseResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ApiResponse<CourseResponse>), StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Policy = "AdminOnly")]
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateCourse(int id, [FromBody] CourseRequest request)
         {
@@ -136,9 +152,12 @@ namespace PRN232.LMS.API.Controllers
         /// <summary>
         ///     Xử lý request/nghiệp vụ DeleteCourse.
         /// </summary>
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Policy = "AdminOnly")]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteCourse(int id)
         {
