@@ -36,14 +36,14 @@ namespace PRN232.LMS.Repositories.Data
                 Username = "admin",
                 Role = "Admin"
             };
-            admin.PasswordHash = hasher.HashPassword(admin, "12345");
+            admin.PasswordHash = hasher.HashPassword(admin, "123456");
 
             var user = new User
             {
                 Username = "student",
                 Role = "User"
             };
-            user.PasswordHash = hasher.HashPassword(user, "12345");
+            user.PasswordHash = hasher.HashPassword(user, "123456");
 
             context.Users.AddRange(admin, user);
             await context.SaveChangesAsync();
