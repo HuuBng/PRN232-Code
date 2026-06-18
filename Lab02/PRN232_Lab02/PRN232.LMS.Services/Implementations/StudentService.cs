@@ -127,7 +127,9 @@ namespace PRN232.LMS.Services.Implementations
             {
                 FullName = request.FullName.Trim(),
                 Email = request.Email.Trim(),
-                DateOfBirth = request.DateOfBirth
+                DateOfBirth = request.DateOfBirth,
+                PhoneNumber = request.PhoneNumber?.Trim(),
+                StudentCode = request.StudentCode?.Trim()
             };
 
             await unitOfWork.Students.AddAsync(student);
@@ -150,6 +152,8 @@ namespace PRN232.LMS.Services.Implementations
             student.FullName = request.FullName.Trim();
             student.Email = request.Email.Trim();
             student.DateOfBirth = request.DateOfBirth;
+            student.PhoneNumber = request.PhoneNumber?.Trim();
+            student.StudentCode = request.StudentCode?.Trim();
 
             unitOfWork.Students.Update(student);
             await unitOfWork.SaveChangesAsync();
