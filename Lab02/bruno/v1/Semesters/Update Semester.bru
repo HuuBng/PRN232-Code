@@ -1,0 +1,32 @@
+meta {
+  name: Update Semester
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}{{v1Path}}/semesters/{{semesterId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+params:path {
+  semesterId: {{semesterId}}
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "semesterName": "Bruno Summer 2027",
+    "startDate": "2027-06-01T00:00:00Z",
+    "endDate": "2027-09-01T00:00:00Z"
+  }
+}

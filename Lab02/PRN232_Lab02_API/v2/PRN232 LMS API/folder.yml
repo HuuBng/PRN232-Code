@@ -1,7 +1,0 @@
-info:
-  name: PRN232 LMS API
-  type: folder
-  seq: 1
-
-request:
-  auth: inherit

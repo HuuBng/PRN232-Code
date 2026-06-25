@@ -1,0 +1,33 @@
+meta {
+  name: Get Students V2
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}{{v2Path}}/students?page=1&size=10&sort=fullName&fields=&expand=&search=
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+params:query {
+  page: 1
+  size: 10
+  sort: fullName
+  fields: 
+  expand: 
+  search: 
+}
+
+headers {
+  Accept: application/json
+}
+
+docs {
+  # Get Students v2
+  - v2 surfaces `phoneNumber` and `studentCode` in response.
+}

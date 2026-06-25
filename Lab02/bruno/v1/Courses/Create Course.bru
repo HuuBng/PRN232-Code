@@ -1,0 +1,34 @@
+meta {
+  name: Create Course
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}{{v1Path}}/courses
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "courseName": "Bruno Intro Course",
+    "semesterId": 1,
+    "subjectId": 1
+  }
+}
+
+script:post-response {
+  if (res.status === 201 && res.body && res.body.data && res.body.data.courseId) {
+    bru.setEnvVar("courseId", res.body.data.courseId);
+  }
+}

@@ -1,0 +1,23 @@
+meta {
+  name: Delete Student
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}{{v1Path}}/students/{{studentId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+params:path {
+  studentId: {{studentId}}
+}
+
+headers {
+  Accept: application/json
+}

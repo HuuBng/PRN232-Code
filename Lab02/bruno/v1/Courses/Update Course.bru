@@ -1,0 +1,32 @@
+meta {
+  name: Update Course
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{baseUrl}}{{v1Path}}/courses/{{courseId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+params:path {
+  courseId: {{courseId}}
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "courseName": "Bruno Renamed Course",
+    "semesterId": 1,
+    "subjectId": 1
+  }
+}

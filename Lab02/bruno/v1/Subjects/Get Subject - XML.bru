@@ -1,0 +1,29 @@
+meta {
+  name: Get Subject - XML (Accept negotiation)
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}{{v1Path}}/subjects/{{subjectId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+params:path {
+  subjectId: {{subjectId}}
+}
+
+headers {
+  Accept: application/xml
+}
+
+docs {
+  # Content Negotiation - XML
+  - Expect 200 with `application/xml` payload.
+  - Swap to `Accept: text/plain` for 406 demo.
+}

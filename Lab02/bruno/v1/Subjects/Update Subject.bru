@@ -1,0 +1,32 @@
+meta {
+  name: Update Subject
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}{{v1Path}}/subjects/{{subjectId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+params:path {
+  subjectId: {{subjectId}}
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "subjectCode": "BRU101",
+    "subjectName": "Bruno Advanced",
+    "credit": 4
+  }
+}

@@ -1,0 +1,29 @@
+meta {
+  name: Get Student By Id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}{{v1Path}}/students/{{studentId}}?expand=&fields=
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+params:query {
+  expand: 
+  fields: 
+}
+
+params:path {
+  studentId: {{studentId}}
+}
+
+headers {
+  Accept: application/json
+  X-Request-Id: {{xRequestId}}
+}

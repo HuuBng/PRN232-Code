@@ -1,0 +1,23 @@
+meta {
+  name: Delete Course
+  type: http
+  seq: 6
+}
+
+delete {
+  url: {{baseUrl}}{{v1Path}}/courses/{{courseId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+params:path {
+  courseId: {{courseId}}
+}
+
+headers {
+  Accept: application/json
+}

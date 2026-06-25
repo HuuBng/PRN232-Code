@@ -1,0 +1,29 @@
+meta {
+  name: Get Course By Id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}{{v1Path}}/courses/{{courseId}}?expand=&fields=
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+params:query {
+  expand: 
+  fields: 
+}
+
+params:path {
+  courseId: {{courseId}}
+}
+
+headers {
+  Accept: application/json
+  X-Request-Id: {{xRequestId}}
+}

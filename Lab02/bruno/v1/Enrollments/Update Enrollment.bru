@@ -1,0 +1,33 @@
+meta {
+  name: Update Enrollment
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}{{v1Path}}/enrollments/{{enrollmentId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+params:path {
+  enrollmentId: {{enrollmentId}}
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "studentId": 1,
+    "courseId": 1,
+    "enrollDate": "2026-06-25T00:00:00Z",
+    "status": "Completed"
+  }
+}
