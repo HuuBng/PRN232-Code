@@ -1,6 +1,6 @@
 using FluentValidation;
 using PRN232.LMS.Services.Models.Semesters;
-namespace PRN232.LMS.Services.Validation
+namespace PRN232.LMS.Services.Validators
 {
     public class SemesterRequestValidator : AbstractValidator<SemesterRequest>
     {

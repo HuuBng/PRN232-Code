@@ -17,6 +17,31 @@ namespace PRN232.LMS.API.Controllers
     [Authorize]
     public class StudentsV2Controller(IStudentService studentService) : ControllerBase
     {
+        [ProducesResponseType(typeof(ApiResponse<PaginatedResponse<StudentV2Response>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<PaginatedResponse<object>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Policy = "ReadOrAdmin")]
+        [HttpGet]
+        public async Task<IActionResult> GetStudents([FromQuery] QueryParameters query)
+        {
+            var result = await studentService.GetStudentsV2Async(query);
+
+            if (FieldSelector.HasFields(query.Fields))
+            {
+                var selected = new PaginatedResponse<object>
+                {
+                    Items = FieldSelector.SelectFields(result.Items, query.Fields),
+                    Pagination = result.Pagination
+                };
+
+                return Ok(ApiResponse<PaginatedResponse<object>>.Ok(selected));
+            }
+
+            return Ok(ApiResponse<PaginatedResponse<StudentV2Response>>.Ok(result));
+        }
+
         [ProducesResponseType(typeof(ApiResponse<StudentV2Response>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
