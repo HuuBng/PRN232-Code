@@ -31,5 +31,7 @@ script:post-response {
 
 docs {
   # Login (student)
+  - Reads `userUsername` / `userPassword` from the **collection vars** in `collection.bru`.
+  - Stores `accessToken` / `refreshToken` into the active env on 200.
   - Returns a `User`-role token. Use it to verify 403 on `AdminOnly` endpoints.
 }

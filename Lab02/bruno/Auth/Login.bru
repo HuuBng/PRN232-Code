@@ -31,6 +31,7 @@ script:post-response {
 
 docs {
   # Login (admin)
-  - Stores `accessToken` and `refreshToken` into the active env.
+  - Reads `adminUsername` / `adminPassword` from the **collection vars** in `collection.bru`.
+  - Stores `accessToken` / `refreshToken` into the active env on 200.
   - Pair with `Login - Student` to grab a non-admin token for 403 demos.
 }

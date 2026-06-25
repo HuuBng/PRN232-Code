@@ -10,10 +10,6 @@ get {
   auth: bearer
 }
 
-auth:bearer {
-  token: {{accessToken}}
-}
-
 params:query {
   expand: 
   fields: 
@@ -26,4 +22,12 @@ params:path {
 headers {
   Accept: application/json
   X-Request-Id: {{xRequestId}}
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+vars:pre-request {
+  studentId: 1
 }

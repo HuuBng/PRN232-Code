@@ -1,0 +1,4 @@
+# Ignore Bruno local env that may contain runtime-populated secrets
+# (the Login request writes accessToken / refreshToken into this file).
+# Keep checked-in envs (dev, staging, prod, ...) and remove this line per-env.
+bruno/environments/Local.bru

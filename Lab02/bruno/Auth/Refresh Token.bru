@@ -27,3 +27,9 @@ script:post-response {
     bru.setEnvVar("refreshToken", res.body.data.refreshToken);
   }
 }
+
+docs {
+  # Refresh Token
+  - Reads `refreshToken` from the active env (set by Login).
+  - Writes the new token pair back into the env.
+}

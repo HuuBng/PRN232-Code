@@ -5,26 +5,26 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}{{v2Path}}/students?page=1&size=10&sort=fullName&fields=&expand=&search=
+  url: {{baseUrl}}{{v2Path}}/students
   body: none
   auth: bearer
 }
 
-auth:bearer {
-  token: {{accessToken}}
-}
-
 params:query {
-  page: 1
-  size: 10
-  sort: fullName
-  fields: 
-  expand: 
-  search: 
+  ~page: 1
+  ~size: 10
+  ~sort: fullName
+  ~fields: 
+  ~expand: 
+  ~search: 
 }
 
 headers {
   Accept: application/json
+}
+
+auth:bearer {
+  token: {{accessToken}}
 }
 
 docs {
