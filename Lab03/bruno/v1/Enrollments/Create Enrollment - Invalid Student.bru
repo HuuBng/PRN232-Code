@@ -1,0 +1,37 @@
+meta {
+  name: Create Enrollment - Invalid Student
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}api/enrollments
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "studentId": 99999,
+    "courseId": 1,
+    "enrollDate": "2026-06-25T00:00:00Z",
+    "status": "Active"
+  }
+}
+
+docs {
+  # Create Enrollment - Invalid Student (gRPC Failure)
+  - Uses a non-existent `studentId` (99999).
+  - Course Service calls Student Service via gRPC to verify existence.
+  - gRPC returns `exists: false`, causing a 400 BadRequest.
+  - Expected response: `{ "success": false, "message": "Student with id 99999 does not exist" }`.
+}

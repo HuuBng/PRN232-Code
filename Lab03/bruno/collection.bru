@@ -18,9 +18,15 @@ vars:pre-request {
 }
 
 docs {
-  # PRN232 LMS API
+  # PRN232 LMS Microservices API
   
-  Bruno collection for the Lab 02 PRN232 LMS API.
+  Bruno collection for Lab 03 — Microservices Architecture with gRPC & YARP Gateway.
+  
+  ## Architecture
+  - **API Gateway** (port 8080) — YARP reverse proxy with JWT validation
+  - **Identity Service** — Authentication, JWT generation
+  - **Student Service** — Student CRUD + gRPC server (port 5001)
+  - **Course Service** — Courses/Enrollments + gRPC client to Student Service
   
   ## Quick start
   1. Pick the `Local` env (top-right).
@@ -29,14 +35,12 @@ docs {
   
   ## Roles
   - `admin` / `123456` — Admin role, full access.
-  - `student` / `123456` — User role, gets 403 on `AdminOnly` endpoints (use `Auth → Login - Student` to swap).
+  - `student` / `123456` — User role, gets 403 on `AdminOnly` endpoints.
   
-  ## Versioning
-  - `v1/` uses `/api/v1` routes.
-  - `v2/` uses `/api/v2` routes (extra `phoneNumber`, `studentCode` fields).
+  ## gRPC Scenarios
+  - `Enrollments → Get Enrollment with Student Expand` — Course Service fetches student data via gRPC.
+  - `Enrollments → Create Enrollment - Invalid Student` — gRPC check fails, returns 400.
   
-  ## Notes
-  - `Create *` requests auto-save the new id into the env so PUT/DELETE chain works.
-  - `Subjects → Get Subject - XML` and `Subjects → Get Subject - 406 Unsupported` cover content negotiation.
-  - Credentials live as collection vars; `Local` env can override per env.
+  ## Health Checks
+  - `Admin → Health - *` — Verify each microservice is healthy.
 }

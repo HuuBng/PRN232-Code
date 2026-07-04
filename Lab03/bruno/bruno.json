@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "name": "PRN232 LMS API",
+  "name": "PRN232 LMS Microservices",
   "type": "collection",
   "ignore": [
     "node_modules",

@@ -1,0 +1,17 @@
+meta {
+  name: Health Check - Student Service
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}api/students/health
+  body: none
+  auth: none
+}
+
+docs {
+  # Health Check - Student Service
+  - Direct health endpoint routed through the gateway.
+  - Should return `{ "status": "healthy" }`.
+}

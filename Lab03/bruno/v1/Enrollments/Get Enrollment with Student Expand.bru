@@ -1,0 +1,26 @@
+meta {
+  name: Get Enrollment with Student Expand
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}api/enrollments/1?expand=student
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Accept: application/json
+}
+
+docs {
+  # Get Enrollment with Student (gRPC)
+  - `expand=student` triggers a gRPC call from Course Service to Student Service.
+  - Response includes `student.fullName` and `student.email` fetched via gRPC.
+  - Demonstrates cross-service data composition.
+}
