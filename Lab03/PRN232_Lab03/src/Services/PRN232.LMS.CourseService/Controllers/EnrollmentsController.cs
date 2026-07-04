@@ -30,7 +30,7 @@ namespace PRN232.LMS.CourseService.Controllers
             {
                 var selected = new PaginatedResponse<object>
                 {
-                    Items = FieldSelector.SelectFields(result.Items, query.Fields),
+                    Items = FieldSelector.SelectFields<EnrollmentResponse>(result.Items, query.Fields),
                     Pagination = result.Pagination
                 };
 

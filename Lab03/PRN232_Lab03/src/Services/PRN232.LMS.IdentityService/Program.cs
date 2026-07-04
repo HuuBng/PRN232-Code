@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -11,8 +12,18 @@ using PRN232.LMS.Shared.Middleware;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddLmsSerilog("identity-service");
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.ReturnHttpNotAcceptable = true;
+})
+    .AddXmlSerializerFormatters();
 builder.Services.AddLmsSwagger("PRN232 LMS Identity Service", "v1");
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 builder.Services.AddLmsJwtAuth(builder.Configuration);
 builder.Services.AddDbContext<IdentityDbContext>(options =>
     options.UseNpgsql(
@@ -42,6 +53,7 @@ using (var scope = app.Services.CreateScope())
     await IdentityDbSeeder.SeedAsync(dbContext);
 }
 
+app.UseForwardedHeaders();
 app.UseLmsRequestLogging();
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 app.UseAuthentication();

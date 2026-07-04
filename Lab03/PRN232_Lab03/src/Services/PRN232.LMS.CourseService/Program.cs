@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using OpenTelemetry.Resources;
@@ -15,15 +16,29 @@ using PRN232.LMS.Shared.Middleware;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddLmsSerilog("course-service");
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.ReturnHttpNotAcceptable = true;
+})
+    .AddXmlSerializerFormatters();
 builder.Services.AddLmsJwtAuth(builder.Configuration);
 builder.Services.AddLmsSwagger("PRN232 LMS Course Service", "v1");
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 builder.Services.AddApiVersioning(options =>
 {
     options.DefaultApiVersion = new ApiVersion(1, 0);
     options.AssumeDefaultVersionWhenUnspecified = true;
     options.ReportApiVersions = true;
-}).AddMvc().AddApiExplorer();
+}).AddMvc().AddApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
+});
 builder.Services.AddDbContext<CourseDbContext>(options =>
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("CourseDb"),
@@ -80,6 +95,7 @@ using (var scope = app.Services.CreateScope())
     await CourseDbSeeder.SeedAsync(dbContext);
 }
 
+app.UseForwardedHeaders();
 app.UseLmsRequestLogging();
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 app.UseSwagger();

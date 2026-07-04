@@ -4,10 +4,10 @@ namespace PRN232.LMS.Shared.Models
 {
     public static class FieldSelector
     {
-        public static IEnumerable<object> SelectFields<T>(IEnumerable<T> items, string? fields)
+        public static List<object> SelectFields<T>(IEnumerable<T> items, string? fields)
         {
             var properties = GetSelectedProperties<T>(fields);
-            return items.Select(item => SelectFields(item, properties));
+            return items.Select(item => SelectFields(item, properties)).ToList();
         }
 
         public static object SelectFields<T>(T item, string? fields)

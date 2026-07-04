@@ -1,3 +1,5 @@
+using System.Xml.Serialization;
+
 namespace PRN232.LMS.Shared.Models
 {
     public class PaginationMetadata
@@ -8,9 +10,12 @@ namespace PRN232.LMS.Shared.Models
         public int TotalPages { get; set; }
     }
 
+    [XmlType("PaginatedResponse")]
     public class PaginatedResponse<T>
     {
-        public IEnumerable<T> Items { get; set; } = [];
+        [XmlArray("Items")]
+        [XmlArrayItem("Item")]
+        public List<T> Items { get; set; } = [];
         public PaginationMetadata Pagination { get; set; } = new PaginationMetadata();
     }
 }
