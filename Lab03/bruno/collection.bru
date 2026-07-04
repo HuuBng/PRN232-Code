@@ -37,10 +37,10 @@ docs {
   - `admin` / `123456` — Admin role, full access.
   - `student` / `123456` — User role, gets 403 on `AdminOnly` endpoints.
   
-  ## gRPC Scenarios
-  - `Enrollments → Get Enrollment with Student Expand` — Course Service fetches student data via gRPC.
+  ## Required Test Scenarios
+  - `Auth → Login` — JWT token generated.
+  - `Students → Unauthorized - Get Students` — HTTP 401 without token.
+  - `Students → Get Students` — Protected API access with valid JWT.
+  - `Enrollments → Get Enrollment with Student Expand` — gRPC data returned successfully.
   - `Enrollments → Create Enrollment - Invalid Student` — gRPC check fails, returns 400.
-  
-  ## Health Checks
-  - `Admin → Health - *` — Verify each microservice is healthy.
 }

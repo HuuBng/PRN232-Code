@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using OpenTelemetry.Resources;
@@ -17,6 +18,12 @@ builder.AddLmsSerilog("course-service");
 builder.Services.AddControllers();
 builder.Services.AddLmsJwtAuth(builder.Configuration);
 builder.Services.AddLmsSwagger("PRN232 LMS Course Service", "v1");
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ReportApiVersions = true;
+}).AddMvc().AddApiExplorer();
 builder.Services.AddDbContext<CourseDbContext>(options =>
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("CourseDb"),

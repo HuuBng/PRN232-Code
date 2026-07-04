@@ -9,6 +9,7 @@ COPY . .
 RUN dotnet publish src/Services/PRN232.LMS.IdentityService/PRN232.LMS.IdentityService.csproj -c Release -o /app/publish /p:UseAppHost=false
 
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY --from=build /app/publish .
 EXPOSE 8080

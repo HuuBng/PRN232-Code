@@ -1,0 +1,18 @@
+meta {
+  name: Unauthorized - Get Students
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}api/students
+  body: none
+  auth: none
+}
+
+docs {
+  # Unauthorized Request — HTTP 401
+  - No bearer token provided.
+  - API Gateway validates JWT before forwarding to Student Service.
+  - Expected: `401 Unauthorized` from the gateway.
+}
