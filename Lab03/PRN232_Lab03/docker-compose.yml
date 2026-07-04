@@ -1,51 +1,186 @@
 services:
-  api:
+  # --- API Gateway ---
+  api-gateway:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: prn232-lab-lms-api
+      dockerfile: src/Gateway/PRN232.LMS.ApiGateway/Dockerfile
+    container_name: lms-api-gateway
     restart: unless-stopped
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
-      ConnectionStrings__DefaultConnection: Host=postgres;Database=PRN232_LMS_Lab;Username=postgres;Password=12345
-      Jwt__Secret: ${JWT_SECRET:-LAB_DOCKER_SECRET_REPLACE_WITH_ENVIRONMENT_VARIABLE_32_CHARS}
-      Jwt__Issuer: PRN232.LMS.API
-      Jwt__Audience: PRN232.LMS.Client
+      Jwt__Secret: ${JWT_SECRET}
+      Jwt__Issuer: ${JWT_ISSUER:-PRN232.LMS}
+      Jwt__Audience: ${JWT_AUDIENCE:-PRN232.LMS.Client}
     ports:
       - "8080:8080"
     depends_on:
-      postgres:
+      identity-service:
         condition: service_healthy
-  postgres:
-    image: postgres:17-alpine
-    container_name: prn232-lab-lms-postgres
+      student-service:
+        condition: service_healthy
+      course-service:
+        condition: service_healthy
+    networks:
+      - edge
+      - backend
+
+  # --- Identity Service ---
+  identity-service:
+    build:
+      context: .
+      dockerfile: src/Services/PRN232.LMS.IdentityService/Dockerfile
+    container_name: lms-identity-service
     restart: unless-stopped
     environment:
-      POSTGRES_DB: PRN232_LMS_Lab
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: "12345"
-    volumes:
-      - prn232_lab_lms_postgres_data:/var/lib/postgresql/data
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__IdentityDb: Host=postgres;Database=identity_db;Username=postgres;Password=${DB_PASSWORD}
+      Jwt__Secret: ${JWT_SECRET}
+      Jwt__Issuer: ${JWT_ISSUER:-PRN232.LMS}
+      Jwt__Audience: ${JWT_AUDIENCE:-PRN232.LMS.Client}
+      OpenTelemetry__Endpoint: http://jaeger:4317
+    expose:
+      - "8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d PRN232_LMS_Lab"]
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - backend
+
+  # --- Student Service ---
+  student-service:
+    build:
+      context: .
+      dockerfile: src/Services/PRN232.LMS.StudentService/Dockerfile
+    container_name: lms-student-service
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__StudentDb: Host=postgres;Database=student_db;Username=postgres;Password=${DB_PASSWORD}
+      Jwt__Secret: ${JWT_SECRET}
+      Jwt__Issuer: ${JWT_ISSUER:-PRN232.LMS}
+      Jwt__Audience: ${JWT_AUDIENCE:-PRN232.LMS.Client}
+      OpenTelemetry__Endpoint: http://jaeger:4317
+    expose:
+      - "8080"
+      - "5001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - backend
+
+  # --- Course Service ---
+  course-service:
+    build:
+      context: .
+      dockerfile: src/Services/PRN232.LMS.CourseService/Dockerfile
+    container_name: lms-course-service
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__CourseDb: Host=postgres;Database=course_db;Username=postgres;Password=${DB_PASSWORD}
+      Jwt__Secret: ${JWT_SECRET}
+      Jwt__Issuer: ${JWT_ISSUER:-PRN232.LMS}
+      Jwt__Audience: ${JWT_AUDIENCE:-PRN232.LMS.Client}
+      Grpc__StudentServiceUrl: http://student-service:5001
+      ConnectionStrings__Redis: redis:6379
+      OpenTelemetry__Endpoint: http://jaeger:4317
+    expose:
+      - "8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      student-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - backend
+
+  # --- PostgreSQL (single instance, multiple databases) ---
+  postgres:
+    image: postgres:17-alpine
+    container_name: lms-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - lms_postgres_data:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
     ports:
-      - "5433:5432"
+      - "5432:5432"
+    networks:
+      - backend
 
+  # --- Redis Cache ---
+  redis:
+    image: redis:7-alpine
+    container_name: lms-redis
+    restart: unless-stopped
+    expose:
+      - "6379"
+    networks:
+      - backend
+
+  # --- Jaeger (OpenTelemetry Collector) ---
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: lms-jaeger
+    restart: unless-stopped
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+    networks:
+      - backend
+
+  # --- Dozzle (Log Viewer) ---
   dozzle:
     image: amir20/dozzle:latest
-    container_name: prn232-lab-dozzle
+    container_name: lms-dozzle
     restart: unless-stopped
     ports:
       - "9999:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     depends_on:
-      - api
-      - postgres
+      - api-gateway
+      - identity-service
+      - student-service
+      - course-service
+    networks:
+      - edge
 
 volumes:
-  prn232_lab_lms_postgres_data:
+  lms_postgres_data:
+
+networks:
+  edge:
+    driver: bridge
+  backend:
+    driver: bridge

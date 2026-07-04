@@ -1,0 +1,21 @@
+<Solution>
+  <Configurations>
+    <Configuration Name="Debug" />
+    <Configuration Name="Release" />
+  </Configurations>
+  <Folder Name="src/Shared/">
+    <Project Path="src/PRN232.LMS.Shared/PRN232.LMS.Shared.csproj" />
+    <Project Path="src/PRN232.LMS.Protos/PRN232.LMS.Protos.csproj" />
+  </Folder>
+  <Folder Name="src/Services/">
+    <Project Path="src/Services/PRN232.LMS.IdentityService/PRN232.LMS.IdentityService.csproj" />
+    <Project Path="src/Services/PRN232.LMS.StudentService/PRN232.LMS.StudentService.csproj" />
+    <Project Path="src/Services/PRN232.LMS.CourseService/PRN232.LMS.CourseService.csproj" />
+  </Folder>
+  <Folder Name="src/Gateway/">
+    <Project Path="src/Gateway/PRN232.LMS.ApiGateway/PRN232.LMS.ApiGateway.csproj" />
+  </Folder>
+  <Folder Name="tests/">
+    <Project Path="tests/PRN232.LMS.Tests/PRN232.LMS.Tests.csproj" />
+  </Folder>
+</Solution>

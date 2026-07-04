@@ -1,0 +1,208 @@
+{
+  "info": {
+    "name": "PRN232 Lab03 - Microservices with gRPC",
+    "description": "Postman Collection for testing PRN232 LMS Microservices Architecture with gRPC communication",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Login - Get JWT Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{gateway_url}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"admin\", \"password\": \"123456\"}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.accessToken) {",
+                  "    pm.environment.set(\"jwt_token\", jsonData.data.accessToken);",
+                  "    pm.environment.set(\"refresh_token\", jsonData.data.refreshToken);",
+                  "}",
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Returns access token', function () { pm.expect(jsonData.data.accessToken).to.exist; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{gateway_url}}/api/auth/refresh-token",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"refreshToken\": \"{{refresh_token}}\"}"
+            }
+          }
+        },
+        {
+          "name": "Protected API - Admin Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": "{{gateway_url}}/api/admin/dashboard"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Student Service",
+      "item": [
+        {
+          "name": "Get All Students (Paginated)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": "{{gateway_url}}/api/students?page=1&size=10"
+          }
+        },
+        {
+          "name": "Get Student by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": "{{gateway_url}}/api/students/1"
+          }
+        },
+        {
+          "name": "Create Student (Admin Only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": "{{gateway_url}}/api/students",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"fullName\": \"New Student\", \"email\": \"newstudent@lms.local\", \"dateOfBirth\": \"2000-01-01\", \"phoneNumber\": \"0901234567\", \"studentCode\": \"SE999999\"}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Course Service",
+      "item": [
+        {
+          "name": "Get All Courses",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": "{{gateway_url}}/api/courses"
+          }
+        },
+        {
+          "name": "Get All Enrollments",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": "{{gateway_url}}/api/enrollments"
+          }
+        },
+        {
+          "name": "Get Enrollment with Student (gRPC Expand)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": "{{gateway_url}}/api/enrollments/1?expand=student"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. gRPC Enrollment Flow",
+      "item": [
+        {
+          "name": "Create Enrollment - Valid Student (gRPC Check)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": "{{gateway_url}}/api/enrollments",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"studentId\": 1, \"courseId\": 1, \"enrollDate\": \"2024-09-01\", \"status\": \"Active\"}"
+            }
+          }
+        },
+        {
+          "name": "Create Enrollment - Invalid Student (gRPC Check Fails)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": "{{gateway_url}}/api/enrollments",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"studentId\": 99999, \"courseId\": 1, \"enrollDate\": \"2024-09-01\", \"status\": \"Active\"}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Unauthorized Tests",
+      "item": [
+        {
+          "name": "Get Students without JWT",
+          "request": {
+            "method": "GET",
+            "url": "{{gateway_url}}/api/students"
+          }
+        },
+        {
+          "name": "Create Student as Non-Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": "{{gateway_url}}/api/students",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"fullName\": \"Test\", \"email\": \"test@lms.local\", \"dateOfBirth\": \"2000-01-01\"}"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "gateway_url", "value": "http://localhost:8080" }
+  ]
+}
