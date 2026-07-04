@@ -61,6 +61,64 @@ namespace PRN232.LMS.Services.Implementations
         }
 
         /// <summary>
+        ///     v2: paginated list with <c>PhoneNumber</c> and <c>StudentCode</c>
+        ///     surfaced in the response.
+        /// </summary>
+        public async Task<PaginatedResponse<StudentV2Response>> GetStudentsV2Async(QueryParameters query)
+        {
+            var students = unitOfWork.Students.GetAll();
+
+            if (!string.IsNullOrWhiteSpace(query.Search))
+            {
+                var keyword = query.Search.Trim().ToLower();
+                students = students.Where(s =>
+                    s.FullName.ToLower().Contains(keyword) ||
+                    s.Email.ToLower().Contains(keyword));
+            }
+
+            students = SortHelper.ApplySort(students, query.Sort, "StudentId",
+                ("fullname", "FullName"),
+                ("email", "Email"),
+                ("dateofbirth", "DateOfBirth"));
+
+            var totalItems = await students.CountAsync();
+            var page = query.ValidPage;
+            var pageSize = query.ValidSize;
+
+            var includeEnrollments = SortHelper.ShouldExpand(query.Expand, "enrollments");
+            if (includeEnrollments)
+            {
+                students = students.Include(s => s.Enrollments).ThenInclude(e => e.Course);
+            }
+
+            var items = await students
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(s => new StudentV2Response
+                {
+                    StudentId = s.StudentId,
+                    FullName = s.FullName,
+                    Email = s.Email,
+                    DateOfBirth = s.DateOfBirth,
+                    PhoneNumber = s.PhoneNumber,
+                    StudentCode = s.StudentCode
+                })
+                .ToListAsync();
+
+            return new PaginatedResponse<StudentV2Response>
+            {
+                Items = items,
+                Pagination = new PaginationMetadata
+                {
+                    Page = page,
+                    PageSize = pageSize,
+                    TotalItems = totalItems,
+                    TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize)
+                }
+            };
+        }
+
+        /// <summary>
         ///     Xử lý request/nghiệp vụ GetStudentByIdAsync.
         /// </summary>
         public async Task<StudentResponse?> GetStudentByIdAsync(int id, string? expand = null)

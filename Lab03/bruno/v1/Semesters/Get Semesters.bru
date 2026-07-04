@@ -1,0 +1,27 @@
+meta {
+  name: Get Semesters
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}{{v1Path}}/semesters?page=1&size=10&sort=-startDate&fields=&search=
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+params:query {
+  page: 1
+  size: 10
+  sort: -startDate
+  fields: 
+  search: 
+}
+
+headers {
+  Accept: application/json
+}

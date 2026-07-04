@@ -1,0 +1,27 @@
+meta {
+  name: Get Subject By Id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}{{v1Path}}/subjects/{{subjectId}}?fields=
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+params:query {
+  fields: 
+}
+
+params:path {
+  subjectId: {{subjectId}}
+}
+
+headers {
+  Accept: application/json
+}

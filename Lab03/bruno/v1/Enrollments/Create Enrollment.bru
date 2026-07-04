@@ -1,0 +1,35 @@
+meta {
+  name: Create Enrollment
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}{{v1Path}}/enrollments
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "studentId": 1,
+    "courseId": 1,
+    "enrollDate": "2026-06-25T00:00:00Z",
+    "status": "Active"
+  }
+}
+
+script:post-response {
+  if (res.status === 201 && res.body && res.body.data && res.body.data.enrollmentId) {
+    bru.setEnvVar("enrollmentId", res.body.data.enrollmentId);
+  }
+}

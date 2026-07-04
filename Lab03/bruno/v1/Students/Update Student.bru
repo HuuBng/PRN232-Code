@@ -1,0 +1,34 @@
+meta {
+  name: Update Student
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}{{v1Path}}/students/{{studentId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+params:path {
+  studentId: {{studentId}}
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "fullName": "Bruno Updated",
+    "email": "bruno.updated@example.com",
+    "phoneNumber": "+84909111111",
+    "studentCode": "SE19002",
+    "dateOfBirth": "2001-02-20T00:00:00Z"
+  }
+}

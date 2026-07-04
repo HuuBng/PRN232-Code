@@ -1,0 +1,35 @@
+meta {
+  name: Get Students
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}{{v1Path}}/students
+  body: none
+  auth: bearer
+}
+
+params:query {
+  ~page: 1
+  ~size: 10
+  ~sort: fullName
+  ~fields: studentId,fullName,email
+  ~search: 
+}
+
+headers {
+  Accept: application/json
+  X-Request-Id: {{xRequestId}}
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+docs {
+  # Get Students
+  - ReadOrAdmin policy.
+  - Try `?fields=studentId,fullName` for sparse payload.
+  - Try `?search=an` for search demo.
+}

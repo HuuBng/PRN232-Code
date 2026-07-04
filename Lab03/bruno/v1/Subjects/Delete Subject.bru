@@ -1,0 +1,23 @@
+meta {
+  name: Delete Subject
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}{{v1Path}}/subjects/{{subjectId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+params:path {
+  subjectId: {{subjectId}}
+}
+
+headers {
+  Accept: application/json
+}

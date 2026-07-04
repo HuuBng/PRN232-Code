@@ -13,7 +13,7 @@ using PRN232.LMS.Repositories.Interfaces;
 using PRN232.LMS.Services.Implementations;
 using PRN232.LMS.Services.Interfaces;
 using PRN232.LMS.Services.Models.Common;
-using PRN232.LMS.Services.Validation;
+using PRN232.LMS.Services.Validators;
 using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,0 +1,37 @@
+meta {
+  name: Login
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}{{v1Path}}/auth/login
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "username": "{{adminUsername}}",
+    "password": "{{adminPassword}}"
+  }
+}
+
+script:post-response {
+  if (res.status === 200 && res.body && res.body.data) {
+    bru.setEnvVar("accessToken", res.body.data.accessToken);
+    bru.setEnvVar("refreshToken", res.body.data.refreshToken);
+  }
+}
+
+docs {
+  # Login (admin)
+  - Reads `adminUsername` / `adminPassword` from the **collection vars** in `collection.bru`.
+  - Stores `accessToken` / `refreshToken` into the active env on 200.
+  - Pair with `Login - Student` to grab a non-admin token for 403 demos.
+}

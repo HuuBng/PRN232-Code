@@ -1,0 +1,28 @@
+meta {
+  name: Get Enrollment By Id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}{{v1Path}}/enrollments/{{enrollmentId}}?expand=&fields=
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+params:query {
+  expand: 
+  fields: 
+}
+
+params:path {
+  enrollmentId: {{enrollmentId}}
+}
+
+headers {
+  Accept: application/json
+}

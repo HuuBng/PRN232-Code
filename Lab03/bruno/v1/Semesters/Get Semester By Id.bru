@@ -1,0 +1,27 @@
+meta {
+  name: Get Semester By Id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}{{v1Path}}/semesters/{{semesterId}}?fields=
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+params:query {
+  fields: 
+}
+
+params:path {
+  semesterId: {{semesterId}}
+}
+
+headers {
+  Accept: application/json
+}

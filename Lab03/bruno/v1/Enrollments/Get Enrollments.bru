@@ -1,0 +1,28 @@
+meta {
+  name: Get Enrollments
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}{{v1Path}}/enrollments?page=1&size=10&sort=-enrollDate&fields=&expand=&search=
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+params:query {
+  page: 1
+  size: 10
+  sort: -enrollDate
+  fields: 
+  expand: 
+  search: 
+}
+
+headers {
+  Accept: application/json
+}

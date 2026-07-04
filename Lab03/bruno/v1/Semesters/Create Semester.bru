@@ -1,0 +1,35 @@
+meta {
+  name: Create Semester
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}{{v1Path}}/semesters
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "semesterName": "Bruno Spring 2027",
+    "startDate": "2027-01-15T00:00:00Z",
+    "endDate": "2027-05-15T00:00:00Z"
+  }
+}
+
+script:post-response {
+  if (res.status === 201 && res.body && res.body.data && res.body.data.semesterId) {
+    bru.setEnvVar("semesterId", res.body.data.semesterId);
+    bru.setEnvVar("semesterIdForCourse", res.body.data.semesterId);
+  }
+}

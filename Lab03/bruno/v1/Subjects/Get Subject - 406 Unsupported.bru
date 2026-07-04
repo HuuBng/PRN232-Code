@@ -1,0 +1,29 @@
+meta {
+  name: Get Subject - 406 Unsupported Media
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{baseUrl}}{{v1Path}}/subjects/{{subjectId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+params:path {
+  subjectId: {{subjectId}}
+}
+
+headers {
+  Accept: text/plain
+}
+
+docs {
+  # Content Negotiation - 406
+  - `ReturnHttpNotAcceptable = true` means unsupported Accept → 406.
+  - Confirms the content-negotiation safety net.
+}

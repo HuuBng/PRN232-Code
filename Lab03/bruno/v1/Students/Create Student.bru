@@ -1,0 +1,43 @@
+meta {
+  name: Create Student
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}{{v1Path}}/students
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "fullName": "Bruno Tester",
+    "email": "bruno.tester@example.com",
+    "phoneNumber": "+84909000000",
+    "studentCode": "SE19001",
+    "dateOfBirth": "2001-01-15T00:00:00Z"
+  }
+}
+
+script:post-response {
+  if (res.status === 201 && res.body && res.body.data && res.body.data.studentId) {
+    bru.setEnvVar("studentId", res.body.data.studentId);
+  }
+}
+
+docs {
+  # Create Student
+  - AdminOnly. 403 if token is `User` role.
+  - `StudentCode` must match `FptStudentCode` validator.
+  - Auto-saves new `studentId` to env on 201.
+}

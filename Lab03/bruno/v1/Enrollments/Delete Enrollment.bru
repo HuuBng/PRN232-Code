@@ -1,0 +1,23 @@
+meta {
+  name: Delete Enrollment
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}{{v1Path}}/enrollments/{{enrollmentId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+params:path {
+  enrollmentId: {{enrollmentId}}
+}
+
+headers {
+  Accept: application/json
+}

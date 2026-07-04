@@ -1,0 +1,42 @@
+headers {
+  accept: application/json
+  content-type: application/json
+}
+
+auth {
+  mode: none
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:8080/
+  v1Path: api/v1
+  v2Path: api/v2
+  adminUsername: admin
+  adminPassword: 123456
+  userUsername: student
+  userPassword: 123456
+}
+
+docs {
+  # PRN232 LMS API
+  
+  Bruno collection for the Lab 02 PRN232 LMS API.
+  
+  ## Quick start
+  1. Pick the `Local` env (top-right).
+  2. Run `Auth → Login` to obtain a token. The script stores `accessToken` / `refreshToken` in the active env.
+  3. Hit any other request — they read the bearer token automatically.
+  
+  ## Roles
+  - `admin` / `123456` — Admin role, full access.
+  - `student` / `123456` — User role, gets 403 on `AdminOnly` endpoints (use `Auth → Login - Student` to swap).
+  
+  ## Versioning
+  - `v1/` uses `/api/v1` routes.
+  - `v2/` uses `/api/v2` routes (extra `phoneNumber`, `studentCode` fields).
+  
+  ## Notes
+  - `Create *` requests auto-save the new id into the env so PUT/DELETE chain works.
+  - `Subjects → Get Subject - XML` and `Subjects → Get Subject - 406 Unsupported` cover content negotiation.
+  - Credentials live as collection vars; `Local` env can override per env.
+}

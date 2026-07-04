@@ -1,0 +1,25 @@
+meta {
+  name: Get Dashboard
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}{{v1Path}}/admin/dashboard
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Accept: application/json
+  X-Request-Id: {{xRequestId}}
+}
+
+docs {
+  # Admin Dashboard
+  - Admin role required. Returns 403 with student token.
+}

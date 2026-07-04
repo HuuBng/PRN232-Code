@@ -8,6 +8,7 @@ namespace PRN232.LMS.Services.Interfaces
     public interface IStudentService
     {
         Task<PaginatedResponse<StudentResponse>> GetStudentsAsync(QueryParameters query);
+        Task<PaginatedResponse<StudentV2Response>> GetStudentsV2Async(QueryParameters query);
         Task<StudentResponse?> GetStudentByIdAsync(int id, string? expand = null);
         Task<StudentResponse> CreateStudentAsync(StudentRequest request);
         Task<StudentResponse?> UpdateStudentAsync(int id, StudentRequest request);

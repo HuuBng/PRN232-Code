@@ -85,7 +85,7 @@ namespace PRN232.LMS.Services.Implementations
             {
                 StudentId = request.StudentId,
                 CourseId = request.CourseId,
-                EnrollDate = request.EnrollDate,
+                EnrollDate = NormalizeDate(request.EnrollDate),
                 Status = request.Status.Trim()
             };
 
@@ -106,7 +106,7 @@ namespace PRN232.LMS.Services.Implementations
 
             enrollment.StudentId = request.StudentId;
             enrollment.CourseId = request.CourseId;
-            enrollment.EnrollDate = request.EnrollDate;
+            enrollment.EnrollDate = NormalizeDate(request.EnrollDate);
             enrollment.Status = request.Status.Trim();
 
             unitOfWork.Enrollments.Update(enrollment);
@@ -196,6 +196,16 @@ namespace PRN232.LMS.Services.Implementations
                 throw new EnrollmentValidationException($"Course with id {request.CourseId} does not exist");
             }
 
+        }
+
+        private static DateTime NormalizeDate(DateTime value)
+        {
+            return value.Kind switch
+            {
+                DateTimeKind.Utc => DateTime.SpecifyKind(value.ToLocalTime(), DateTimeKind.Unspecified),
+                DateTimeKind.Local => DateTime.SpecifyKind(value, DateTimeKind.Unspecified),
+                _ => value
+            };
         }
     }
 }
