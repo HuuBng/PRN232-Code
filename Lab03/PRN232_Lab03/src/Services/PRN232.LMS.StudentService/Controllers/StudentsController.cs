@@ -1,6 +1,8 @@
 using Asp.Versioning;
+using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PRN232.LMS.Shared.Events;
 using PRN232.LMS.Shared.Models;
 using PRN232.LMS.StudentService.Models;
 using PRN232.LMS.StudentService.Services;
@@ -13,7 +15,9 @@ namespace PRN232.LMS.StudentService.Controllers
     [Route("api/students")]
     [Route("api/v{version:apiVersion}/students")]
     [Authorize]
-    public class StudentsController(IStudentService studentService) : ControllerBase
+    public class StudentsController(
+        IStudentService studentService,
+        IPublishEndpoint publishEndpoint) : ControllerBase
     {
         [ProducesResponseType(typeof(ApiResponse<PaginatedResponse<StudentResponse>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<PaginatedResponse<object>>), StatusCodes.Status200OK)]
@@ -71,9 +75,17 @@ namespace PRN232.LMS.StudentService.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
-        public async Task<IActionResult> CreateStudent([FromBody] StudentRequest request)
+        public async Task<IActionResult> CreateStudent([FromBody] StudentRequest request, CancellationToken ct)
         {
             var student = await studentService.CreateStudentAsync(request);
+
+            await publishEndpoint.Publish(new StudentCreatedIntegrationEvent(
+                student.StudentId,
+                request.StudentCode ?? string.Empty,
+                request.FullName,
+                request.Email,
+                DateTime.UtcNow), ct);
+
             return CreatedAtAction(
                 nameof(GetStudentById),
                 new { id = student.StudentId },
@@ -88,13 +100,20 @@ namespace PRN232.LMS.StudentService.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Authorize(Policy = "AdminOnly")]
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdateStudent(int id, [FromBody] StudentRequest request)
+        public async Task<IActionResult> UpdateStudent(int id, [FromBody] StudentRequest request, CancellationToken ct)
         {
             var student = await studentService.UpdateStudentAsync(id, request);
             if (student == null)
             {
                 return NotFound(ApiResponse<StudentResponse>.Fail("Student not found"));
             }
+
+            await publishEndpoint.Publish(new StudentUpdatedIntegrationEvent(
+                student.StudentId,
+                request.StudentCode ?? string.Empty,
+                request.FullName,
+                request.Email,
+                DateTime.UtcNow), ct);
 
             return Ok(ApiResponse<StudentResponse>.Ok(student, "Student updated successfully"));
         }
@@ -106,13 +125,17 @@ namespace PRN232.LMS.StudentService.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Authorize(Policy = "AdminOnly")]
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeleteStudent(int id)
+        public async Task<IActionResult> DeleteStudent(int id, CancellationToken ct)
         {
             var deleted = await studentService.DeleteStudentAsync(id);
             if (!deleted)
             {
                 return NotFound(ApiResponse<object>.Fail("Student not found"));
             }
+
+            await publishEndpoint.Publish(new StudentDeletedIntegrationEvent(
+                id,
+                DateTime.UtcNow), ct);
 
             return Ok(ApiResponse<object>.Ok(null, "Student deleted successfully"));
         }

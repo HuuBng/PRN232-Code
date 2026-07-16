@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using MassTransit;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using OpenTelemetry.Resources;
@@ -80,6 +81,24 @@ builder.Services.AddOpenTelemetry()
             options.Endpoint = new Uri(builder.Configuration["OpenTelemetry:Endpoint"] ?? "http://localhost:4317");
         });
     });
+
+// MassTransit + RabbitMQ
+builder.Services.AddMassTransit(mt =>
+{
+    mt.UsingRabbitMq((ctx, cfg) =>
+    {
+        var host = builder.Configuration["RabbitMq:Host"] ?? "localhost";
+        var virtualHost = builder.Configuration["RabbitMq:VirtualHost"] ?? "/";
+        var username = builder.Configuration["RabbitMq:Username"] ?? "guest";
+        var password = builder.Configuration["RabbitMq:Password"] ?? "guest";
+
+        cfg.Host(host, virtualHost, h =>
+        {
+            h.Username(username);
+            h.Password(password);
+        });
+    });
+});
 
 var app = builder.Build();
 

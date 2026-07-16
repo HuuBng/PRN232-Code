@@ -1,15 +1,18 @@
 using Asp.Versioning;
+using MassTransit;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using PRN232.LMS.CourseService.Consumers;
 using PRN232.LMS.CourseService.Data;
 using PRN232.LMS.CourseService.Grpc;
 using PRN232.LMS.CourseService.Services;
 using PRN232.LMS.Protos;
 using PRN232.LMS.Shared.Auth;
 using PRN232.LMS.Shared.Configuration;
+using PRN232.LMS.Shared.Events;
 using PRN232.LMS.Shared.Extensions;
 using PRN232.LMS.Shared.Middleware;
 
@@ -86,6 +89,31 @@ builder.Services.AddOpenTelemetry()
             options.Endpoint = new Uri(builder.Configuration["OpenTelemetry:Endpoint"] ?? "http://localhost:4317");
         });
     });
+
+// MassTransit + RabbitMQ (consumer for StudentCreatedIntegrationEvent)
+builder.Services.AddMassTransit(mt =>
+{
+    mt.AddConsumer<StudentCreatedConsumer>();
+
+    mt.UsingRabbitMq((ctx, cfg) =>
+    {
+        var host = builder.Configuration["RabbitMq:Host"] ?? "localhost";
+        var virtualHost = builder.Configuration["RabbitMq:VirtualHost"] ?? "/";
+        var username = builder.Configuration["RabbitMq:Username"] ?? "guest";
+        var password = builder.Configuration["RabbitMq:Password"] ?? "guest";
+
+        cfg.Host(host, virtualHost, h =>
+        {
+            h.Username(username);
+            h.Password(password);
+        });
+
+        cfg.ReceiveEndpoint("course-service.student-created", e =>
+        {
+            e.ConfigureConsumer<StudentCreatedConsumer>(ctx);
+        });
+    });
+});
 
 var app = builder.Build();
 

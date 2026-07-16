@@ -35,7 +35,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
-      ConnectionStrings__IdentityDb: Host=postgres;Database=identity_db;Username=postgres;Password=${DB_PASSWORD}
+      ConnectionStrings__IdentityDb: Host=identity-db;Database=identity_db;Username=postgres;Password=${DB_PASSWORD}
       Jwt__Secret: ${JWT_SECRET}
       Jwt__Issuer: ${JWT_ISSUER:-PRN232.LMS}
       Jwt__Audience: ${JWT_AUDIENCE:-PRN232.LMS.Client}
@@ -43,7 +43,7 @@ services:
     expose:
       - "8080"
     depends_on:
-      postgres:
+      identity-db:
         condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
@@ -64,16 +64,22 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
-      ConnectionStrings__StudentDb: Host=postgres;Database=student_db;Username=postgres;Password=${DB_PASSWORD}
+      ConnectionStrings__StudentDb: Host=student-db;Database=student_db;Username=postgres;Password=${DB_PASSWORD}
       Jwt__Secret: ${JWT_SECRET}
       Jwt__Issuer: ${JWT_ISSUER:-PRN232.LMS}
       Jwt__Audience: ${JWT_AUDIENCE:-PRN232.LMS.Client}
       OpenTelemetry__Endpoint: http://jaeger:4317
+      RabbitMq__Host: rabbitmq
+      RabbitMq__VirtualHost: /
+      RabbitMq__Username: ${RABBITMQ_USER:-guest}
+      RabbitMq__Password: ${RABBITMQ_PASS:-guest}
     expose:
       - "8080"
       - "5001"
     depends_on:
-      postgres:
+      student-db:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
@@ -94,19 +100,25 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
-      ConnectionStrings__CourseDb: Host=postgres;Database=course_db;Username=postgres;Password=${DB_PASSWORD}
+      ConnectionStrings__CourseDb: Host=course-db;Database=course_db;Username=postgres;Password=${DB_PASSWORD}
       Jwt__Secret: ${JWT_SECRET}
       Jwt__Issuer: ${JWT_ISSUER:-PRN232.LMS}
       Jwt__Audience: ${JWT_AUDIENCE:-PRN232.LMS.Client}
       Grpc__StudentServiceUrl: http://student-service:5001
       ConnectionStrings__Redis: redis:6379
       OpenTelemetry__Endpoint: http://jaeger:4317
+      RabbitMq__Host: rabbitmq
+      RabbitMq__VirtualHost: /
+      RabbitMq__Username: ${RABBITMQ_USER:-guest}
+      RabbitMq__Password: ${RABBITMQ_PASS:-guest}
     expose:
       - "8080"
     depends_on:
-      postgres:
+      course-db:
         condition: service_healthy
       student-service:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
@@ -117,17 +129,17 @@ services:
     networks:
       - backend
 
-  # --- PostgreSQL (single instance, multiple databases) ---
-  postgres:
+  # --- Identity Database ---
+  identity-db:
     image: postgres:17-alpine
-    container_name: lms-postgres
+    container_name: lms-identity-db
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_DB: identity_db
     volumes:
-      - lms_postgres_data:/var/lib/postgresql/data
-      - ./db-init:/docker-entrypoint-initdb.d:ro
+      - lms_identity_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -135,6 +147,44 @@ services:
       retries: 5
     ports:
       - "5433:5432"
+    networks:
+      - backend
+
+  # --- Student Database ---
+  student-db:
+    image: postgres:17-alpine
+    container_name: lms-student-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_DB: student_db
+    volumes:
+      - lms_student_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - backend
+
+  # --- Course Database ---
+  course-db:
+    image: postgres:17-alpine
+    container_name: lms-course-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_DB: course_db
+    volumes:
+      - lms_course_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - backend
 
@@ -176,8 +226,34 @@ services:
     networks:
       - edge
 
+  # --- RabbitMQ (MassTransit broker) ---
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: lms-rabbitmq
+    restart: unless-stopped
+    hostname: rabbitmq
+    ports:
+      - "5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-guest}
+    volumes:
+      - lms_rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks:
+      - backend
+
 volumes:
-  lms_postgres_data:
+  lms_identity_data:
+  lms_student_data:
+  lms_course_data:
+  lms_rabbitmq_data:
 
 networks:
   edge:

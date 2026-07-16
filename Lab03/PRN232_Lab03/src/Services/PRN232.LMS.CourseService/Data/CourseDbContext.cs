@@ -11,6 +11,7 @@ namespace PRN232.LMS.CourseService.Data
         public DbSet<Enrollment> Enrollments { get; set; } = null!;
         public DbSet<Semester> Semesters { get; set; } = null!;
         public DbSet<Subject> Subjects { get; set; } = null!;
+        public DbSet<ReceivedStudentEvent> ReceivedStudentEvents { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -68,6 +69,21 @@ namespace PRN232.LMS.CourseService.Data
                 entity.Property(e => e.SubjectCode).HasMaxLength(20).HasColumnName("subject_code");
                 entity.Property(e => e.SubjectName).HasMaxLength(100).HasColumnName("subject_name");
                 entity.Property(e => e.Credit).HasColumnName("credit");
+            });
+
+            modelBuilder.Entity<ReceivedStudentEvent>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("received_student_events_pkey");
+                entity.ToTable("received_student_events");
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.StudentId).HasColumnName("student_id");
+                entity.Property(e => e.StudentCode).HasMaxLength(20).HasColumnName("student_code");
+                entity.Property(e => e.FullName).HasMaxLength(100).HasColumnName("full_name");
+                entity.Property(e => e.Email).HasMaxLength(100).HasColumnName("email");
+                entity.Property(e => e.ReceivedAt)
+                    .HasColumnType("timestamp without time zone")
+                    .HasColumnName("received_at");
+                entity.Property(e => e.MessageId).HasColumnName("message_id");
             });
         }
     }
